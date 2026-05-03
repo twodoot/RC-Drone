@@ -32,7 +32,7 @@ I fixed the SDA pin not being connected, changed the circuit to be powerd by onl
 
 
 # 3rd May: Made V2 of drone model and fixed voltage level on drone logic pin
-I took some inspiration from FPV drones where I saw lots of them have thir batteries strapped down on top of drone, and I also thought to put the ESCs on the struts of the drone to save space on the main body, and designed the main body to accomodate one battery with indented slots for the straps. I'm planning to mount the ESCs under the struts with zipties. I added some of the bolts and standoffs in this version as well as cutting out the holes for the bolts (1.15x enlarged from prior experience) but will finalise it later.
+I took some inspiration from FPV drones where I saw lots of them have thir batteries strapped down on top of drone, and I also thought to put the ESCs on the struts of the drone to save space on the main body, and designed the main body to accomodate one battery with indented slots for the straps. The arduino will be mounted in centre on the base and the IMU will be mounted on the ceiling of the section direcctly above it. I'm planning to mount the ESCs under the struts with zipties. I added some of the bolts and standoffs in this version as well as cutting out the holes for the bolts (1.15x enlarged from prior experience) but will finalise it later.
 I also realised that the ESP version of the arduino nano can only handle 3.3 volts through its logic pins and luckily the MPU-6050 functions on 3.3 volts so I rewired it to have it be powerd by the 3.3 volt pin on the nano. I will fix this issue on the controller wiring later.
 As a sidenote I will have the main frame of the drone (and controller casing) 3D printed
 
