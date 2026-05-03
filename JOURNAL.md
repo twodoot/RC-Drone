@@ -9,6 +9,6 @@ created_at: "5/3/2026"
 I made this model with the idea of making a compartment for putting in two LIPO batteries with the other electronics on top. This however has resulted in quite a boxy and unaerodynamic shape.
 To improve upon it I will try to look at other designs to take inspiration from them
 
-Need to add image here
+![image](https://github.com/twodoot/RC-Drone/blob/main/Images/Drone_V1_image.png)
 
 **Total time spent:4h**
