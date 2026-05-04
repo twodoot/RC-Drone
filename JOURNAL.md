@@ -106,4 +106,8 @@ togglefunction(lastswitch, toggle) {
  
  
  ```
+ 
+ I also fixed an issue with the switch being connected to an analogue pin on the wiring diagram
+ ![image](https://github.com/twodoot/RC-Drone/blob/main/Images/Controller_Wiring_V3.png)
+ 
  **Total time spent: 4.5h**
