@@ -44,5 +44,5 @@ As a sidenote I will have the main frame of the drone (and controller casing) 3D
 #4th May: Fixed the wiring diagram voltage for the controller
 The KY-023 joystick breakout board im planning to use is compatibele with 3.3 volts so the fix was simple
 
-![image](https://github.com/twodoot/RC-Drone/blob/main/Images/Controller_Wiring_V2)
+![image](https://github.com/twodoot/RC-Drone/blob/main/Images/Controller_Wiring_V2.png)
  
