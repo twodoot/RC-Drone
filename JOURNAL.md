@@ -41,11 +41,69 @@ As a sidenote I will have the main frame of the drone (and controller casing) 3D
 
 **Total time spent: 5h**
 
-# 4th May: Fixed the wiring diagram voltage for the controller and Work on Drone CAD
+# 4th May: Fixed the wiring diagram voltage for the controller and Work on Drone CAD, started working on code for drone controller
 The KY-023 joystick breakout board im planning to use is compatibele with 3.3 volts so the fix was simple
 I also worked on the drone CAD model by adding standoffs and bolts and thinging in general about how the electronics and other components will be mounted together on the drone, and i organised the compnents on the CAD model into subfolders for better readability.
-
 ![image](https://github.com/twodoot/RC-Drone/blob/main/Images/Controller_Wiring_V2.png)
 ![image](https://github.com/twodoot/RC-Drone/blob/main/Images/Drone_V2_V2.png)
  
- **Total time spent: 1.5h**
+ 
+I also started working on the code for the drone controller, I wrote the stuff to take inputs from my joysticks and convert them to the data I will send to the drone, with debounce protection on the switch.
+ ```cpp
+ #define rollrate_max 360; // gyroscope rollrate maximum in deg/s
+#define rollangle_max 45; // accelerometer rollangle maximum in deg
+#define yawrate_max 360; // mximum yawrate in deg/s
+
+void setup() {
+  pinMode(D1,INPUT_PULLUP);
+
+  lastswitch = HIGH;
+  toggle_flight_mode = false;
+}
+
+void loop() {
+  short left_y = analogueread(A0);
+  short left_x = analogueread(A1);
+
+  short right_x = analogueread(A2);
+  short right_y = analogueread(A3);
+
+  left_y = constrain(left_y, 520,1023);
+  left_y = map(left_y, 520, 1023, 0, 180);
+  left_x = map(left_x, 0, 1023, -yawrate_max, yawrate_max); // deg/s
+
+
+  curswitch = digitalread(D2);
+  if (curswitch == LOW && lastswich == HIGH) {
+    delay(50);
+    curswitch = digitalread(D2);
+    if (curswitch == LOW ) {
+      toggle_flight_mode = togglefunction(lastswitch, toggle_flight_mode);
+    }
+  }
+  lastswitch = curswitch;
+
+  if (toggle_flight_mode) {
+    // gyro flight
+    right_y = map(right_y, 0, 1023, -rollrate_max, rollrate_max); // deg/s
+    right_x = map(right_x, 0, 1023, -rollrate_max, rollrate_max); // deg/s
+  } else {
+    // accelerometer flight
+    right_y = map(right_y, 0, 1023, -rollangle_max, rollangle_max); // target angle in deg
+    right_x = map(right_x, 0, 1023, -rollangle_max, rollangle_max); // target angle in deg
+  }
+}
+
+togglefunction(lastswitch, toggle) {
+    switch (toggle) {
+      case false:
+        toggle = true;
+      case true:
+        toggle = false;
+  }
+  return toggle;
+}
+ 
+ 
+ ```
+ **Total time spent: 4.5h**
