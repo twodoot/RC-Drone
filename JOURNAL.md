@@ -41,7 +41,7 @@ As a sidenote I will have the main frame of the drone (and controller casing) 3D
 
 **Total time spent: 5h**
 
-# 4th May: Fixed the wiring diagram voltage for the controller
+# 4th May: Fixed the wiring diagram voltage for the controller and Work on Drone CAD
 The KY-023 joystick breakout board im planning to use is compatibele with 3.3 volts so the fix was simple
 I also worked on the drone CAD model by adding standoffs and bolts and thinging in general about how the electronics and other components will be mounted together on the drone, and i organised the compnents on the CAD model into subfolders for better readability.
 
