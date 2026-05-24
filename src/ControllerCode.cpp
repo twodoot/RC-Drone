@@ -8,8 +8,8 @@
 #define yawrate_max 360 // mximum yawrate in deg/s
 
 bool toggle_flight_mode = false;
-uint8_t lastswitch = HIGH;
-uint8_t curswitch;
+bool lastswitch = HIGH;
+bool curswitch;
 
 esp_now_peer_info_t slave;
 
