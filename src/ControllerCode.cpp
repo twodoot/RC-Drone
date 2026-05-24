@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-bool togglefunction(bool toggle_flight_mode);
+void togglefunction();
 
 #define rollrate_max 360 // gyroscope rollrate maximum in deg/s
 #define rollangle_max 45 // accelerometer rollangle maximum in deg
@@ -31,7 +31,7 @@ void loop() {
     delay(50);
     curswitch = digitalRead(D2);
     if (curswitch == LOW ) {
-      toggle_flight_mode = togglefunction(toggle_flight_mode);
+      togglefunction();
     }
   }
   lastswitch = curswitch;
@@ -47,7 +47,7 @@ void loop() {
   }
 }
 
- bool togglefunction(bool toggle_flight_mode) {
+void togglefunction() {
     switch (toggle_flight_mode) {
       case false:
         toggle_flight_mode = true;
@@ -56,5 +56,4 @@ void loop() {
         toggle_flight_mode = false;
         break;
   }
-  return toggle_flight_mode;
 }
