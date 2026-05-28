@@ -58,7 +58,7 @@ void loop() {
   }
 
 
-  uint16_t data[4] = {left_y, left_x, right_y, right_x};
+  uint16_t data[5] = {left_y, left_x, right_y, right_x, toggle_flight_mode};
   esp_now_send(slave.peer_addr, (uint8_t *)data, sizeof(data));
   
 }
