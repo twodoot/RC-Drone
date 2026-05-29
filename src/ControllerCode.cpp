@@ -26,11 +26,11 @@ void setup() {
 }
 
 void loop() {
-  uint16_t left_y = analogRead(A0);
-  uint16_t left_x = analogRead(A1);
+  int16_t left_y = analogRead(A0);
+  int16_t left_x = analogRead(A1);
 
-  uint16_t right_x = analogRead(A2);
-  uint16_t right_y = analogRead(A3);
+  int16_t right_x = analogRead(A2);
+  int16_t right_y = analogRead(A3);
 
   left_y = constrain(left_y, 520 ,1023);
   left_y = map(left_y, 520, 1023, 0, 180);
@@ -58,7 +58,7 @@ void loop() {
   }
 
 
-  uint16_t data[5] = {left_y, left_x, right_y, right_x, toggle_flight_mode};
+  int16_t data[5] = {left_y, left_x, right_y, right_x, toggle_flight_mode};
   esp_now_send(slave.peer_addr, (uint8_t *)data, sizeof(data));
   
 }
