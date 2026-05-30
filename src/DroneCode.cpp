@@ -16,6 +16,13 @@ double last_yaw_error;
 double last_roll_x_error;
 double last_roll_y_error;
 
+//kalman filter
+double sigma_gyro = 0.5; //standerd deviation of gyroscope errorin degrees/second
+double sigma_accel = 3; // standerd deviation of accelerometer error in degrees
+
+double kalman_roll_x_angle = 0, kalman_uncertaintyroll_x_angle = 2*2;
+double kalman_roll_y_angle = 0, kalman_uncertaintyroll_y_angle = 2*2;
+
 //constants for PIDs
 const double Kp_y, Ki_y, Kd_y; //yaw
 const double Kp_r_a, Ki_r_a, Kd_r_a; //angle
@@ -118,7 +125,8 @@ void loop() {
         last_roll_y_error = roll_y_error;
 
     } else {
-        //kalman filter
+        
+
 
         
 
@@ -151,5 +159,17 @@ double PID (double lasterror, double error, double Kp, double Ki, double Kd) {
     double Deri = (error - lasterror)/ dt;
 
     return Prop + Intg + Deri;
+    
+}
+
+void KalmanRoll (double &kalman_angle, double &kalman_uncertainty, double gyro_input, double accel_angle){
+    kalman_angle = kalman_angle + (dt * gyro_input);
+    kalman_uncertainty = kalman_uncertainty + ((dt * dt) * (sigma_gyro * sigma_gyro));
+    double gain = kalman_uncertainty/(kalman_uncertainty + (sigma_accel * sigma_accel));
+    kalman_angle = kalman_angle + gain * (accel_angle - kalman_angle);
+    kalman_uncertainty = (1-gain)*kalman_uncertainty;
+}
+
+void AccelerometerAngle () {
     
 }
