@@ -9,14 +9,17 @@
 
 Adafruit_MPU6050 mpu;
 
+//other globals
 double dt, last_time;
 
 double last_yaw_error;
+double last_roll_x_error;
+double last_roll_y_error;
 
 //constants for PIDs
-const double Kp_y, Ki_y, Kd_y;
-const double Kp_r_a, Ki_r_a, Kd_r_a;
-const double Kp_r_g, Ki_r_g, Kd_r_g;
+const double Kp_y, Ki_y, Kd_y; //yaw
+const double Kp_r_a, Ki_r_a, Kd_r_a; //angle
+const double Kp_r_g, Ki_r_g, Kd_r_g; //gyro
 
 //inputs
 bool toggle_flight_mode;
@@ -44,7 +47,8 @@ void setup() {
 
     last_time = 0;
     last_yaw_error = 0;
-
+    last_roll_x_error = 0;
+    last_roll_y_error = 0;
 }
 
 void loop() {
@@ -62,26 +66,59 @@ void loop() {
     mpu.getEvent(&a, &g, &t);
 
     //need to convert to correct units
-    a.acceleration.z = a.acceleration.z *180/3.14159;
-    a.acceleration.y = a.acceleration.y *180/3.14159;
-    a.acceleration.x = a.acceleration.x *180/3.14159;
     
+    g.gyro.z = g.gyro.z *180/3.14159;
+    g.gyro.x = g.gyro.x *180/3.14159;
+    g.gyro.y = g.gyro.y *180/3.14159;
 
     //throttle
     mot1, mot2, mot3, mot4 = throttle_inp;
 
     //yaw
-    double yaw_error = yaw_inp - a.acceleration.z;
-
-    mot1, mot2 -= PID(last_yaw_error, yaw_error, Kp_y, Ki_y, Kd_y);
-    last_yaw_error = yaw_error;
+    double yaw_error = yaw_inp - g.gyro.z;
     
-    //roll
+    double temp_yaw_PID = PID(last_yaw_error, yaw_error, Kp_y, Ki_y, Kd_y);
+
+    if (temp_yaw_PID > 0) {
+        mot1, mot3 -= temp_yaw_PID;
+    } else {
+        mot2, mot4 -= temp_yaw_PID;
+    }
+    last_yaw_error = yaw_error;
+
+    
+    
+    //roll and pitch
 
     if (toggle_flight_mode) {
         //gyroflight
+
+        //roll
+        double roll_x_error = roll_x_inp - g.gyro.x;
+
+        double temp_roll_x_PID = PID(last_roll_x_error, roll_x_error, Kp_r_g, Ki_r_g, Kd_r_g);
+
+        if (temp_roll_x_PID > 0) {
+            mot2, mot3 -= temp_roll_x_PID;
+        } else {
+            mot1, mot4 -= temp_roll_x_PID;
+        }
+        last_roll_x_error = roll_x_error;
+
+        //pitch
+        double roll_y_error = roll_y_inp - g.gyro.y;
+
+        double temp_roll_y_PID = PID(last_roll_y_error, roll_y_error, Kp_r_g, Ki_r_g, Kd_r_g);
+
+        if (temp_roll_y_PID > 0) {
+            mot2, mot3 -= temp_roll_y_PID;
+        } else {
+            mot1, mot4 -= temp_roll_y_PID;
+        }
+        last_roll_y_error = roll_y_error;
+
     } else {
-        
+        //kalman filter
 
         
 
