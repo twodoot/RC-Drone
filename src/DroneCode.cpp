@@ -9,7 +9,8 @@
 #define CHANNEL 1
 
 Adafruit_MPU6050 mpu;
-
+sensors_event_t a, g, t;
+Calibration_Data cal;
 //other globals
 double dt, last_time;
 
@@ -21,8 +22,8 @@ double last_roll_y_error;
 double sigma_gyro = 0.5; //standerd deviation of gyroscope errorin degrees/second
 double sigma_accel = 3; // standerd deviation of accelerometer error in degrees
 
-double kalman_roll_x_angle = 0, kalman_uncertaintyroll_x_angle = 2*2;
-double kalman_roll_y_angle = 0, kalman_uncertaintyroll_y_angle = 2*2;
+double kalman_roll_x_angle = 0, kalman_uncertainty_roll_x_angle = 2*2;
+double kalman_roll_y_angle = 0, kalman_uncertainty_roll_y_angle = 2*2;
 
 //constants for PIDs
 const double Kp_y, Ki_y, Kd_y; //yaw
@@ -40,6 +41,10 @@ int16_t roll_y_inp;
 struct Calibration_Data {
     double a_x, a_y, a_z, g_x, g_y, g_z;
 
+};
+struct Roll_Angles {
+
+    double roll_x, roll_y;
 };
 
 void setup() {
@@ -63,6 +68,9 @@ void setup() {
     last_yaw_error = 0;
     last_roll_x_error = 0;
     last_roll_y_error = 0;
+
+    Calibration_Data cal = Calibrate_MPU();
+    
 }
 
 void loop() {
@@ -76,16 +84,16 @@ void loop() {
     last_time = now;
 
     //getting accel and gyro data
-    sensors_event_t a, g, t;
+    
     mpu.getEvent(&a, &g, &t);
 
-    Calibration_Data cal = Calibrate_MPU();
     a.acceleration.x -= cal.a_x;
     a.acceleration.z -= cal.a_z;
     a.acceleration.z -= cal.a_z;
     g.gyro.x-= cal.g_x;
     g.gyro.y-= cal.g_y;
     g.gyro.z-= cal.g_z;
+    
     //need to convert to correct units
     
     g.gyro.z = g.gyro.z *180/3.14159;
@@ -114,7 +122,7 @@ void loop() {
     if (toggle_flight_mode) {
         //gyroflight
 
-        //roll
+        //roll x
         double roll_x_error = roll_x_inp - g.gyro.x;
 
         double temp_roll_x_PID = PID(last_roll_x_error, roll_x_error, Kp_r_g, Ki_r_g, Kd_r_g);
@@ -126,23 +134,57 @@ void loop() {
         }
         last_roll_x_error = roll_x_error;
 
-        //pitch
+        //roll y
         double roll_y_error = roll_y_inp - g.gyro.y;
 
         double temp_roll_y_PID = PID(last_roll_y_error, roll_y_error, Kp_r_g, Ki_r_g, Kd_r_g);
 
         if (temp_roll_y_PID > 0) {
-            mot2, mot3 -= temp_roll_y_PID;
+            mot1, mot2 -= temp_roll_y_PID;
         } else {
-            mot1, mot4 -= temp_roll_y_PID;
+            mot3, mot4 -= temp_roll_y_PID;
         }
         last_roll_y_error = roll_y_error;
 
     } else {
+        Roll_Angles rollangles = Accelerometer_Angle(a.acceleration.x, a.acceleration.y, a.acceleration.z);
         
-
-
         
+        //kalman correceion code (test without first and then try to tune with it if needed)
+        
+        /*
+        KalmanRoll(kalman_roll_x_angle, kalman_uncertainty_roll_x_angle, g.gyro.x, rollangles.roll_x);
+        KalmanRoll(kalman_roll_y_angle, kalman_uncertainty_roll_y_angle, g.gyro.y, rollangles.roll_y);
+
+        rollangles.roll_x = kalman_roll_x_angle;
+        rollangles.roll_y = kalman_roll_y_angle;
+        */
+
+        //roll x
+
+        double roll_x_error = roll_x_inp - rollangles.roll_x;
+
+        double temp_roll_x_PID = PID(last_roll_x_error, roll_x_error,Kp_r_a, Ki_r_a, Kd_r_a);
+
+        if (temp_roll_x_PID > 0) {
+            mot2, mot3 -= temp_roll_x_PID;
+        } else {
+            mot1, mot4 -= temp_roll_x_PID;
+        }
+        last_roll_x_error = roll_x_error;
+
+        //roll y
+
+        double roll_y_error = roll_y_inp - rollangles.roll_y;
+
+        double temp_roll_y_PID = PID(last_roll_y_error, roll_y_error,Kp_r_a, Ki_r_a, Kd_r_a);
+
+        if (temp_roll_y_PID > 0) {
+            mot1, mot2 -= temp_roll_y_PID;
+        } else {
+            mot3, mot4 -= temp_roll_y_PID;
+        }
+        last_roll_y_error = roll_y_error;
 
     }
 
@@ -184,8 +226,12 @@ void KalmanRoll (double &kalman_angle, double &kalman_uncertainty, double gyro_i
     kalman_uncertainty = (1-gain)*kalman_uncertainty;
 }
 
-void AccelerometerAngle (double a_x, double a_y, double a_z) {
-    
+ Roll_Angles Accelerometer_Angle (double a_x, double a_y, double a_z) {
+    double roll_x;
+    double roll_y;
+    roll_x  = atan2(a_y,(sqrt((a_x*a_x)+ (a_z*a_z))))*180/3.14159;
+    roll_y  = atan2(-a_x,(sqrt((a_y*a_y)+ (a_z*a_z))))*180/3.14159;
+    return {roll_x , roll_y};
 }
 
 Calibration_Data Calibrate_MPU () {
