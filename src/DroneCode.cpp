@@ -4,6 +4,7 @@
 #include <Wire.h>
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
+#include <math.h>
 
 #define CHANNEL 1
 
@@ -34,6 +35,12 @@ int16_t throttle_inp;
 int16_t yaw_inp;
 int16_t roll_x_inp;
 int16_t roll_y_inp;
+
+//structs
+struct Calibration_Data {
+    double a_x, a_y, a_z, g_x, g_y, g_z;
+
+};
 
 void setup() {
 
@@ -72,6 +79,13 @@ void loop() {
     sensors_event_t a, g, t;
     mpu.getEvent(&a, &g, &t);
 
+    Calibration_Data cal = Calibrate_MPU();
+    a.acceleration.x -= cal.a_x;
+    a.acceleration.z -= cal.a_z;
+    a.acceleration.z -= cal.a_z;
+    g.gyro.x-= cal.g_x;
+    g.gyro.y-= cal.g_y;
+    g.gyro.z-= cal.g_z;
     //need to convert to correct units
     
     g.gyro.z = g.gyro.z *180/3.14159;
@@ -155,8 +169,8 @@ void OnDataRecv (const uint8_t *mac_addr, const uint8_t *data, int data_len) {
 double PID (double lasterror, double error, double Kp, double Ki, double Kd) {
 
     double Prop = error * Kp;
-    double Intg = error * dt;
-    double Deri = (error - lasterror)/ dt;
+    double Intg = error * dt *Ki;
+    double Deri = ((error - lasterror)/ dt ) * Kd;
 
     return Prop + Intg + Deri;
     
@@ -170,6 +184,28 @@ void KalmanRoll (double &kalman_angle, double &kalman_uncertainty, double gyro_i
     kalman_uncertainty = (1-gain)*kalman_uncertainty;
 }
 
-void AccelerometerAngle () {
+void AccelerometerAngle (double a_x, double a_y, double a_z) {
     
+}
+
+Calibration_Data Calibrate_MPU () {
+    sensors_event_t a, g, t;
+    //takes 20 readings over 5 seconds and averages
+
+    double a_x = 0, a_y = 0, a_z = 0 , g_x = 0, g_y = 0, g_z = 0;
+
+    for (int i = 0; i < 20; i++) {
+        mpu.getEvent(&a, &g, &t);
+        a_x += a.acceleration.x;
+        a_y += a.acceleration.y;
+        a_z += a.acceleration.z;
+        g_x += g.gyro.x;
+        g_y += g.gyro.y;
+        g_z += g.gyro.z;
+        
+        delay(250);
+    }
+    a_x /=20; a_y /=20; a_z /=20; g_x/=20; g_y/=20; g_z /= 20;
+
+    return {a_x , a_y , a_z, g_x, g_y, g_z};
 }
