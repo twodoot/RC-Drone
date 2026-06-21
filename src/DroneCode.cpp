@@ -47,6 +47,14 @@ struct Roll_Angles {
     double roll_x, roll_y;
 };
 
+// funcitons
+void OnDataRecv (const uint8_t *mac_addr, const uint8_t *data, int data_len);
+double PID (double lasterror, double error, double Kp, double Ki, double Kd);
+void KalmanRoll (double &kalman_angle, double &kalman_uncertainty, double gyro_input, double accel_angle);
+Roll_Angles Accelerometer_Angle (double a_x, double a_y, double a_z);
+Calibration_Data Calibrate_MPU ();
+
+
 void setup() {
 
     //mpu stuff
@@ -55,8 +63,10 @@ void setup() {
     mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
     mpu.setGyroRange(MPU6050_RANGE_500_DEG);
     mpu.setFilterBandwidth(MPU6050_BAND_44_HZ);
-    //write function to calibrate mpu
 
+    //function to calibrate mpu
+    Calibration_Data cal = Calibrate_MPU();
+    cal.a_z + 9.80665;   // + cuz it is upsidedown and remove g from calibration as it stands upright when claibrating
 
     //esp stuff
     WiFi.mode(WIFI_AP);
@@ -69,7 +79,7 @@ void setup() {
     last_roll_x_error = 0;
     last_roll_y_error = 0;
 
-    Calibration_Data cal = Calibrate_MPU();
+    
     
 }
 
@@ -94,7 +104,7 @@ void loop() {
     g.gyro.y-= cal.g_y;
     g.gyro.z-= cal.g_z;
     
-    //need to convert to correct units
+    //need to convert to correct units (degrees)
     
     g.gyro.z = g.gyro.z *180/3.14159;
     g.gyro.x = g.gyro.x *180/3.14159;
@@ -108,6 +118,10 @@ void loop() {
     
     double temp_yaw_PID = PID(last_yaw_error, yaw_error, Kp_y, Ki_y, Kd_y);
 
+
+    //mot 1 front left, mot 2 front right, mot 3 back left, mot4 back right
+
+
     if (temp_yaw_PID > 0) {
         mot1, mot3 -= temp_yaw_PID;
     } else {
@@ -116,21 +130,20 @@ void loop() {
     last_yaw_error = yaw_error;
 
     
-    
     //roll and pitch
 
     if (toggle_flight_mode) {
         //gyroflight
 
-        //roll x
+        //roll x (nose up and down)
         double roll_x_error = roll_x_inp - g.gyro.x;
 
         double temp_roll_x_PID = PID(last_roll_x_error, roll_x_error, Kp_r_g, Ki_r_g, Kd_r_g);
 
         if (temp_roll_x_PID > 0) {
-            mot2, mot3 -= temp_roll_x_PID;
+            mot3, mot4 -= temp_roll_x_PID;
         } else {
-            mot1, mot4 -= temp_roll_x_PID;
+            mot1, mot2 -= temp_roll_x_PID;
         }
         last_roll_x_error = roll_x_error;
 
@@ -140,9 +153,9 @@ void loop() {
         double temp_roll_y_PID = PID(last_roll_y_error, roll_y_error, Kp_r_g, Ki_r_g, Kd_r_g);
 
         if (temp_roll_y_PID > 0) {
-            mot1, mot2 -= temp_roll_y_PID;
+            mot2, mot4 -= temp_roll_y_PID;
         } else {
-            mot3, mot4 -= temp_roll_y_PID;
+            mot1, mot3 -= temp_roll_y_PID;
         }
         last_roll_y_error = roll_y_error;
 
@@ -167,9 +180,9 @@ void loop() {
         double temp_roll_x_PID = PID(last_roll_x_error, roll_x_error,Kp_r_a, Ki_r_a, Kd_r_a);
 
         if (temp_roll_x_PID > 0) {
-            mot2, mot3 -= temp_roll_x_PID;
+            mot3, mot4 -= temp_roll_x_PID;
         } else {
-            mot1, mot4 -= temp_roll_x_PID;
+            mot1, mot2 -= temp_roll_x_PID;
         }
         last_roll_x_error = roll_x_error;
 
@@ -180,9 +193,9 @@ void loop() {
         double temp_roll_y_PID = PID(last_roll_y_error, roll_y_error,Kp_r_a, Ki_r_a, Kd_r_a);
 
         if (temp_roll_y_PID > 0) {
-            mot1, mot2 -= temp_roll_y_PID;
+            mot2, mot4 -= temp_roll_y_PID;
         } else {
-            mot3, mot4 -= temp_roll_y_PID;
+            mot1, mot3 -= temp_roll_y_PID;
         }
         last_roll_y_error = roll_y_error;
 
@@ -226,7 +239,7 @@ void KalmanRoll (double &kalman_angle, double &kalman_uncertainty, double gyro_i
     kalman_uncertainty = (1-gain)*kalman_uncertainty;
 }
 
- Roll_Angles Accelerometer_Angle (double a_x, double a_y, double a_z) {
+Roll_Angles Accelerometer_Angle (double a_x, double a_y, double a_z) {
     double roll_x;
     double roll_y;
     roll_x  = atan2(a_y,(sqrt((a_x*a_x)+ (a_z*a_z))))*180/3.14159;
