@@ -5,8 +5,14 @@
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <math.h>
+#include <ESP32Servo.h>
 
 #define CHANNEL 1
+
+Servo ESC1;
+Servo ESC2;
+Servo ESC3;
+Servo ESC4;
 
 Adafruit_MPU6050 mpu;
 sensors_event_t a, g, t;
@@ -78,6 +84,13 @@ void setup() {
     last_yaw_error = 0;
     last_roll_x_error = 0;
     last_roll_y_error = 0;
+
+    //ESC stuff
+    ESC1.attach(D9, 1000,2000);
+    ESC2.attach(D8, 1000,2000);
+    ESC3.attach(D7, 1000,2000);
+    ESC4.attach(D6, 1000,2000);
+
 
     
     
@@ -201,11 +214,12 @@ void loop() {
 
     }
 
-
-
-    //generate 4 pwm signals : first throttle (same both modes), then roll(diff for modes), then yaw(same both modes), 3 pid loops
-
     //output 4 different pwm signals
+    ESC1.write(mot1);
+    ESC2.write(mot2);
+    ESC3.write(mot3);
+    ESC4.write(mot4);
+    
 }
 
 void OnDataRecv (const uint8_t *mac_addr, const uint8_t *data, int data_len) {
