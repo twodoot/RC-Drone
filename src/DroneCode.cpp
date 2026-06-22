@@ -18,11 +18,11 @@ Adafruit_MPU6050 mpu;
 sensors_event_t a, g, t;
 Calibration_Data cal;
 //other globals
-double dt, last_time;
+double dt, last_time = 5000;
 
-double last_yaw_error;
-double last_roll_x_error;
-double last_roll_y_error;
+double last_yaw_error = 0;
+double last_roll_x_error = 0;
+double last_roll_y_error = 0;
 
 //kalman filter
 double sigma_gyro = 0.5; //standerd deviation of gyroscope errorin degrees/second
@@ -83,19 +83,11 @@ void setup() {
     esp_now_init();
     esp_now_register_recv_cb(OnDataRecv);
 
-    last_time = 0;
-    last_yaw_error = 0;
-    last_roll_x_error = 0;
-    last_roll_y_error = 0;
-
     //ESC stuff
     ESC1.attach(D9, 1000,2000);
     ESC2.attach(D8, 1000,2000);
     ESC3.attach(D7, 1000,2000);
     ESC4.attach(D6, 1000,2000);
-
-
-    
     
 }
 
