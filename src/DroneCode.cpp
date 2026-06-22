@@ -36,6 +36,9 @@ const double Kp_y, Ki_y, Kd_y; //yaw
 const double Kp_r_a, Ki_r_a, Kd_r_a; //angle
 const double Kp_r_g, Ki_r_g, Kd_r_g; //gyro
 
+//PID Integral cumulative errors
+double cumerror_yaw = 0, cumerror_roll_x_a = 0, cumerror_roll_y_a = 0, cumerror_roll_x_g = 0, cumerror_roll_y_g = 0;
+
 //inputs
 bool toggle_flight_mode;
 int16_t throttle_inp;
@@ -55,7 +58,7 @@ struct Roll_Angles {
 
 // funcitons
 void OnDataRecv (const uint8_t *mac_addr, const uint8_t *data, int data_len);
-double PID (double lasterror, double error, double Kp, double Ki, double Kd);
+double PID (double lasterror, double error, double &Intg, double Kp, double Ki, double Kd);
 void KalmanRoll (double &kalman_angle, double &kalman_uncertainty, double gyro_input, double accel_angle);
 Roll_Angles Accelerometer_Angle (double a_x, double a_y, double a_z);
 Calibration_Data Calibrate_MPU ();
@@ -129,7 +132,7 @@ void loop() {
     //yaw
     double yaw_error = yaw_inp - g.gyro.z;
     
-    double temp_yaw_PID = PID(last_yaw_error, yaw_error, Kp_y, Ki_y, Kd_y);
+    double temp_yaw_PID = PID(last_yaw_error, yaw_error, cumerror_yaw, Kp_y, Ki_y, Kd_y);
 
 
     //mot 1 front left, mot 2 front right, mot 3 back left, mot4 back right
@@ -148,10 +151,15 @@ void loop() {
     if (toggle_flight_mode) {
         //gyroflight
 
+        //change integral errors for angle flight to 0
+        cumerror_roll_x_a = 0;
+        cumerror_roll_y_a = 0;
+
+
         //roll x (nose up and down)
         double roll_x_error = roll_x_inp - g.gyro.x;
 
-        double temp_roll_x_PID = PID(last_roll_x_error, roll_x_error, Kp_r_g, Ki_r_g, Kd_r_g);
+        double temp_roll_x_PID = PID(last_roll_x_error, roll_x_error, cumerror_roll_x_g ,Kp_r_g, Ki_r_g, Kd_r_g);
 
         if (temp_roll_x_PID > 0) {
             mot3, mot4 -= temp_roll_x_PID;
@@ -163,7 +171,7 @@ void loop() {
         //roll y
         double roll_y_error = roll_y_inp - g.gyro.y;
 
-        double temp_roll_y_PID = PID(last_roll_y_error, roll_y_error, Kp_r_g, Ki_r_g, Kd_r_g);
+        double temp_roll_y_PID = PID(last_roll_y_error, roll_y_error, cumerror_roll_y_g ,Kp_r_g, Ki_r_g, Kd_r_g);
 
         if (temp_roll_y_PID > 0) {
             mot2, mot4 -= temp_roll_y_PID;
@@ -174,7 +182,10 @@ void loop() {
 
     } else {
         Roll_Angles rollangles = Accelerometer_Angle(a.acceleration.x, a.acceleration.y, a.acceleration.z);
-        
+
+        //change integral errors for gyro flight to 0
+        cumerror_roll_x_g = 0;
+        cumerror_roll_y_g = 0;
         
         //kalman correceion code (test without first and then try to tune with it if needed)
         
@@ -190,7 +201,7 @@ void loop() {
 
         double roll_x_error = roll_x_inp - rollangles.roll_x;
 
-        double temp_roll_x_PID = PID(last_roll_x_error, roll_x_error,Kp_r_a, Ki_r_a, Kd_r_a);
+        double temp_roll_x_PID = PID(last_roll_x_error, roll_x_error, cumerror_roll_x_a ,Kp_r_a, Ki_r_a, Kd_r_a);
 
         if (temp_roll_x_PID > 0) {
             mot3, mot4 -= temp_roll_x_PID;
@@ -203,7 +214,7 @@ void loop() {
 
         double roll_y_error = roll_y_inp - rollangles.roll_y;
 
-        double temp_roll_y_PID = PID(last_roll_y_error, roll_y_error,Kp_r_a, Ki_r_a, Kd_r_a);
+        double temp_roll_y_PID = PID(last_roll_y_error, roll_y_error, cumerror_roll_y_a, Kp_r_a, Ki_r_a, Kd_r_a);
 
         if (temp_roll_y_PID > 0) {
             mot2, mot4 -= temp_roll_y_PID;
@@ -238,10 +249,10 @@ void OnDataRecv (const uint8_t *mac_addr, const uint8_t *data, int data_len) {
 
 }
 
-double PID (double lasterror, double error, double Kp, double Ki, double Kd) {
+double PID (double lasterror, double error, double &Intg, double Kp, double Ki, double Kd) {
 
     double Prop = error * Kp;
-    double Intg = error * dt *Ki;
+    Intg += error * dt *Ki;
     double Deri = ((error - lasterror)/ dt ) * Kd;
 
     return Prop + Intg + Deri;
