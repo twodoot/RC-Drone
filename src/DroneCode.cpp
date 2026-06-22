@@ -225,13 +225,16 @@ void loop() {
 void OnDataRecv (const uint8_t *mac_addr, const uint8_t *data, int data_len) {
 
     int16_t newdata[5];
-    memcpy(&newdata, data, sizeof(newdata));
+    if (sizeof(data) == 10) {
+        memcpy(newdata, data, sizeof(newdata));
 
-    throttle_inp = newdata[0];
-    yaw_inp = newdata[1];
-    roll_y_inp = newdata[2];
-    roll_x_inp = newdata[3];
-    toggle_flight_mode = newdata[4];
+        throttle_inp = newdata[0];
+        yaw_inp = newdata[1];
+        roll_y_inp = newdata[2];
+        roll_x_inp = newdata[3];
+        toggle_flight_mode = newdata[4];
+    }
+    
 
 }
 
