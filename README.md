@@ -58,3 +58,12 @@ most of the assmebly can be done by refering to the wiring diagrams in ...
 the ESCs will need to be strapped onto the arms of the drone using zip ties and the battery will be strapped to the top using battery straps into the notches in the top.
 
 more detailed asseblyt construction will be provided after I assemble to drone myself
+
+## Code
+
+To flash the code to the arduinos you will need to install PlatformIO on github.
+Libraries are already managed by Platform io in the platformio.ini file.
+to flash connect the required arduino to the computer you are on via usb.
+source code can be found in the src folder but to get all the code as a whole just clone the repo in vscode.
+
+You will need the macadress of your drone arduino to insert into the code manually (in the controller code). This can be done by flashing the getmacadress file to your drone arduino and running it, which will print the mac adress of the drone in the serial monitor in a format where it can be simply copy pasted into the controller code.
