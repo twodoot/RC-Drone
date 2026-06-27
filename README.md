@@ -40,9 +40,9 @@ I'm making this project for personal experience in hardware and software design 
 	
 (for bolts minimum length refers to the longest bolt of that length as rest can be cut to size) <br>
 	
-- M1.6 bolts **x8** minimum length ..mm
-- M3 bolts  **x11** minimum length ..mm  (where I said M2.5 on CAD for the Controller I'm almost certain M3 would work but I will test when I assemble the drone)
-- M5 bolts **x4** minimum length ..mm
+- M1.6 bolts **x8** minimum length 15mm
+- M3 bolts  **x11** minimum length 18mm  (where I said M2.5 on CAD for the Controller I'm almost certain M3 would work but I will test when I assemble the drone)
+- M5 bolts **x4** minimum length 73mm
 	
 - M1.6 Nuts **x4** (optional)
 - M3 nuts **x8**
@@ -53,7 +53,7 @@ I'm making this project for personal experience in hardware and software design 
 ## Assembly
 
 Assembly of drone and controller will require soldering to solder wires to the pin less components as well as to potentially solder wires together for extension if requried
-most of the assmebly can be done by refering to the wiring diagrams in ...
+most of the assmebly can be done by refering to the wiring diagrams in ![link](https://github.com/twodoot/RC-Drone/tree/main/Wiring%20Diagrams)
 
 the ESCs will need to be strapped onto the arms of the drone using zip ties and the battery will be strapped to the top using battery straps into the notches in the top.
 
