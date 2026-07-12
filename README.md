@@ -54,26 +54,70 @@ I'm making this project for personal experience in hardware and software design 
 
 ### Controller:
 
-Slice and print the Lid and Base of the controller and Spacers: files can be found ![Controller CAD Files](https://github.com/twodoot/RC-Drone/tree/main/CAD%20Files/Controller). <br> 
+Slice and print the Lid and Base of the controller and Spacers: files can be found ![Controller CAD Files](https://github.com/twodoot/RC-Drone/tree/main/CAD%20Files/Controller)
 
-Wire up the Ardiuno nano ESP-32 and the joystick modules with relativly long cables so that they can be fit into the controller later easily by reffering to this wiring diagram. This will require soldering and where a 9 volt battery is mentioned in the wiring diagram solder the 9 volt battery connector between the VIN and GND of the arduino (the ground cable will require 2 cables be solderd together on a 3 way junciton as well as the 3.3V power and GND for the joysticks) <br> 
-![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Wiring%20Diagrams/Wiring%20Diagram%20Controller.png) <br> 
+Wire up the Ardiuno nano ESP-32 and the joystick modules with relativly long cables so that they can be fit into the controller later easily by reffering to this wiring diagram. This will require soldering and where a 9 volt battery is mentioned in the wiring diagram solder the 9 volt battery connector between the VIN and GND of the arduino (the ground cable will require 2 cables be solderd together on a 3 way junciton as well as the 3.3V power and GND for the joysticks)
 
-Place M1.6 spacers (or standoffs) on the M1.6 screw holes [image] <br> 
-Then place the arduino on top and place another spacer on top of the holes (to prevent bolt damaging it) [image]
-Then screw M1.6 bolts through the arduino mounting holes [images]
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Wiring%20Diagrams/Wiring%20Diagram%20Controller.png)
 
-Do a similar process for the joystick modules sandwiching the mounting holes this time with M3 spacers and a KY-023 joystick module between. [images]
-Then attach the battery inside the battery compartment and attach the battery connectors to the battery.
+Place M1.6 spacers (or standoffs) on the M1.6 screw holes <br> 
 
-Finally screw on the lid with 3 M3 bolts into the lid mounting holes as shown below [iamge]
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Controller_Assembly_Nano_Standoffs.png)
+
+Then place the arduino on top and place another spacer on top of the holes (to prevent bolt damaging it) <br> 
+
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Controller_Assembly_Nano_Spacers.png)
+
+Then screw M1.6 bolts through the arduino mounting holes <br> 
+
+![images](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Controller_Assembly_Nano_Bolts.png)
+
+Do a similar process for the joystick modules sandwiching the mounting holes this time with M3 spacers and a KY-023 joystick module between. <br> 
+
+![images](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Controller_Assembly_Joystick_Spacers.png)
+
+Then attach the battery inside the battery compartment and attach the battery connectors to the battery.<br> 
+
+![iamge](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Controller_Assembly_Battery_Compartment.png)
+
+Finally screw on the lid with 3 M3 bolts into the lid mounting holes as shown below <br> 
+
+![iamge](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Controller_Assembly_Lid_Bolts.png) <br> <br> 
 
 ### Drone:
 
+Slice and print the Top and Base of the Drone and Spacers: files can be found ![Drone CAD Files](https://github.com/twodoot/RC-Drone/tree/main/CAD%20Files/Drone)
 
-the ESCs will need to be strapped onto the arms of the drone using zip ties and the battery will be strapped to the top using battery straps into the notches in the top.
+Wire up the arduino and MPU-6050 first using the wiring diagram for reference, ensure wires are kept long enough so that mounting will not be cumbersome.
+Then wire up the digital pin connections to the PWMs of the ESCs and wire up A SINGLE secondary loop to power the ardiuono at 5 volts (as seen in diagram). Measuring out wires with the 3D printed base part on the table is strongly reccomeneded as the ESCs will be zip tied to the bottom of the arms of the drone base part so the wires will need to be reasonably long. The wiring for the motors and batteries can be done later as it requires no soldering.
 
-more detailed asseblyt construction will be provided after I assemble to drone myself
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Wiring%20Diagrams/Drone%20Wiring%20Diagram.png)
+
+The Arduino on the Drone will be mounted very simmilary to the one on the Controller, this time with nuts keeping it tighter in place threaded onto the bottom of the bolts below the base:
+[image]
+[image]
+
+To mount the MPU-6050 it should be noted that it should be mounted upside down with the bolts to the right if you are looking at the drone from its rear. It is also imperative that the M3 bolt used to connect the MPU to the top part not be sticking out of the top becuase the battery will be there, instead use M3 nuts or spacers to increase distance or cut the bolt to size
+
+[image]
+[image]
+
+Then thread the M5 bolts first through the mounting holes on the 3D printed top part all the way, then either use a coupling nut as shown in 3D model or just 2 nuts for each bolt between the base and top to be able to adjust the height of the drone,  and thread each bolt through the base part until they just do not stick out of the bottom. Then position the landing legs at the desired angles (tilted at around 55 degrees or even more for improved balance) with an extra nut threaded inside the leg to tighten it down and thread each bolt farther and farther alternating which bolt you are tightening untill they are all the way through.
+
+[image]
+[image]
+
+The ESCs should then be zip tied onto the arms of the drone on their narrower parts with 2 zip ties per ESC.
+
+[image]
+
+Then use M3 bolts to secure the motors to the arms of the drone with the wires of te motors facing their respective ESC and connect up the wires, ensureing that the front left and back right motors spin clockwise and that the front right and back left motors spin anticlockwise
+
+[image]
+
+then strap down the battery to the top of the drone using battery straps through the notches
+
+[image]
 
 ## Code
 
@@ -83,3 +127,5 @@ to flash connect the required arduino to the computer you are on via usb.
 source code can be found in the src folder but to get all the code as a whole just clone the repo in vscode.
 
 You will need the macadress of your drone arduino to insert into the code manually (in the controller code). This can be done by flashing the getmacadress file to your drone arduino and running it, which will print the mac adress of the drone in the serial monitor in a format where it can be simply copy pasted into the controller code.
+
+In its current state I have not yet tuned the PID controllers but I will provide updated code with tuned controllers after I build and calibrate it myself.
