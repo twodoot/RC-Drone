@@ -52,8 +52,24 @@ I'm making this project for personal experience in hardware and software design 
 
 ## Assembly
 
-Assembly of drone and controller will require soldering to solder wires to the pin less components as well as to potentially solder wires together for extension if requried
-most of the assmebly can be done by refering to the wiring diagrams in ![link](https://github.com/twodoot/RC-Drone/tree/main/Wiring%20Diagrams)
+### Controller:
+
+Slice and print the Lid and Base of the controller and Spacers: files can be found ![Controller CAD Files](https://github.com/twodoot/RC-Drone/tree/main/CAD%20Files/Controller). <br> 
+
+Wire up the Ardiuno nano ESP-32 and the joystick modules with relativly long cables so that they can be fit into the controller later easily by reffering to this wiring diagram. This will require soldering and where a 9 volt battery is mentioned in the wiring diagram solder the 9 volt battery connector between the VIN and GND of the arduino (the ground cable will require 2 cables be solderd together on a 3 way junciton as well as the 3.3V power and GND for the joysticks) <br> 
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Wiring%20Diagrams/Wiring%20Diagram%20Controller.png) <br> 
+
+Place M1.6 spacers (or standoffs) on the M1.6 screw holes [image] <br> 
+Then place the arduino on top and place another spacer on top of the holes (to prevent bolt damaging it) [image]
+Then screw M1.6 bolts through the arduino mounting holes [images]
+
+Do a similar process for the joystick modules sandwiching the mounting holes this time with M3 spacers and a KY-023 joystick module between. [images]
+Then attach the battery inside the battery compartment and attach the battery connectors to the battery.
+
+Finally screw on the lid with 3 M3 bolts into the lid mounting holes as shown below [iamge]
+
+### Drone:
+
 
 the ESCs will need to be strapped onto the arms of the drone using zip ties and the battery will be strapped to the top using battery straps into the notches in the top.
 
