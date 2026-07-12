@@ -19,17 +19,15 @@ I'm making this project for personal experience in hardware and software design 
 - Controller Body
 - Controller Lid
 	
-(where standoffs are mentioned in CAD spacers can be used instead and where M2.5 is mentioned in CAD M3 can be used)
-	
 - M1.6 Spacers **16**
-- M3 Spacers **12**
+- M3 Spacers **20**
 	
 **Electronic Components**
 	
 - Adruino nano ESP32 without pins **x2**
 - MPU-6050
 - 4S 2200mah LiPo battery
-- XT 1felmale -> 2 male splitter **x3**
+- XT-60 1felmale -> 2 male splitter **x3**
 - 9 volt battery
 - 9 volt battery connector
 - Electronic Speed Controller (ESC) at least 40amp rated **x4**
@@ -38,15 +36,13 @@ I'm making this project for personal experience in hardware and software design 
 	
 **Structural**
 	
-(for bolts minimum length refers to the longest bolt of that length as rest can be cut to size) <br>
-	
 - M1.6 bolts **x8** minimum length 15mm
-- M3 bolts  **x11** minimum length 18mm  (where I said M2.5 on CAD for the Controller I'm almost certain M3 would work but I will test when I assemble the drone)
+- M3 bolts  **x13** minimum length 18mm
+- M3 bolts for motors (usually come included with motors) **x16**
 - M5 bolts **x4** minimum length 73mm
 	
-- M1.6 Nuts **x4** (optional)
-- M3 nuts **x8**
-- M5 nuts **x12** (where the coupling nut is seen on CAD 2 regular nuts per each can be used instead)
+- M1.6 Nuts **x4**
+- M5 nuts **x12** 
 - zip ties **x8**
 - battery straps **x2**
 
