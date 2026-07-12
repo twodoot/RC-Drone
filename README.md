@@ -14,11 +14,9 @@ I'm making this project for personal experience in hardware and software design 
 **3D Printed:**
 - Drone Base
 - Drone Top 
-- Drone legs **x4** <br> <br>
-	
+- Drone legs **x4** 
 - Controller Body
 - Controller Lid
-	
 - M1.6 Spacers **16**
 - M3 Spacers **20**
 	
