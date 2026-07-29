@@ -7,7 +7,7 @@
 #include <math.h>
 #include <ESP32Servo.h>
 
-#define CHANNEL 0
+#define CHANNEL 1
 
 //inputs
 bool toggle_flight_mode;
@@ -25,30 +25,26 @@ void setup() {
 
     Serial.begin(115200);
     
-    //esp stuff
     WiFi.mode(WIFI_STA);
 
-   if (esp_now_init() != ESP_OK) {
-    Serial.println("ESPNow Init Fail");
-    return;
-  }
+    esp_now_init();
     esp_now_register_recv_cb(OnDataRecv);
     
 }
 
 void loop() {
-    //String output = String(throttle_inp) + " " + String(yaw_inp) + " " + String(roll_x_inp) + " " + String(roll_y_inp) + " " + String(toggle_flight_mode);
-    //Serial.print(output);
-    //delay(1000);
+    String output = String(throttle_inp) + " " + String(yaw_inp) + " " + String(roll_x_inp) + " " + String(roll_y_inp) + " " + String(toggle_flight_mode);
+    Serial.print(output);
+    delay(1000);
 
 }
 
 void OnDataRecv (const uint8_t *mac_addr, const uint8_t *data, int data_len) {
 
-    Serial.print("data received");
+    //Serial.print("data received");
 
     int16_t newdata[5];
-    //if (data_len == 10) {
+    if (data_len == 10) {
         memcpy(newdata, data, sizeof(newdata));
 
         throttle_inp = newdata[0];
@@ -56,10 +52,5 @@ void OnDataRecv (const uint8_t *mac_addr, const uint8_t *data, int data_len) {
         roll_y_inp = newdata[2];
         roll_x_inp = newdata[3];
         toggle_flight_mode = newdata[4];
-    //}
-
-    String output = String(throttle_inp) + " " + String(yaw_inp) + " " + String(roll_x_inp) + " " + String(roll_y_inp) + " " + String(toggle_flight_mode);
-    Serial.println(output);
-    
-
+    }
 }

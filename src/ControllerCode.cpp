@@ -18,7 +18,7 @@ void setup() {
 
   WiFi.mode(WIFI_STA);
   esp_now_init();
-  uint8_t broadcastAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}; //placeholder adress
+  uint8_t broadcastAddress[] = {0xE8, 0xF6, 0x0A, 0xC0, 0x46, 0x90};
   memcpy(slave.peer_addr, broadcastAddress, 6);
   slave.channel = CHANNEL;
   slave.encrypt = false;

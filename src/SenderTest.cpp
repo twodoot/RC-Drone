@@ -2,7 +2,7 @@
 #include <esp_now.h>
 #include <WiFi.h>
 
-#define CHANNEL 0
+#define CHANNEL 1
 #define rollrate_max 360 // gyroscope rollrate maximum in deg/s
 #define rollangle_max 45 // accelerometer rollangle maximum in deg
 #define yawrate_max 360 // mximum yawrate in deg/s
@@ -13,19 +13,12 @@ bool curswitch;
 
 esp_now_peer_info_t slave;
 
-void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
-
 void setup() {
   Serial.begin(115200);
 
   WiFi.mode(WIFI_STA);
 
-  if (esp_now_init() != ESP_OK) {
-    Serial.println("ESPNow Init Fail");
-    return;
-  }
-
- esp_now_register_send_cb(OnDataSent);
+  esp_now_init();
 
   uint8_t broadcastAddress[] = {0xE8, 0xF6, 0x0A, 0xC0, 0x46, 0x90};
   memcpy(slave.peer_addr, broadcastAddress, 6);
@@ -33,9 +26,7 @@ void setup() {
   slave.channel = CHANNEL;
   slave.encrypt = false;
 
-  if(esp_now_add_peer(&slave) != ESP_OK) {
-    Serial.println("ESPNOW adding peer fail");
-  };
+  esp_now_add_peer(&slave);
 }
 
 void loop() {
@@ -48,11 +39,6 @@ void loop() {
   int16_t data[5] = {left_y, left_x, right_y, right_x, toggle_flight_mode};
   esp_now_send(slave.peer_addr, (uint8_t *)data, sizeof(data));
 
-  Serial.print("i sent the data");
+  //Serial.print("i sent the data");
   delay(1000);
-}
-
-void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
-  Serial.print("\r\nLast Packet Send Status:\t");
-  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
 }
