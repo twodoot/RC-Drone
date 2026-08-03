@@ -28,13 +28,14 @@ void setup() {
 }
 
 void loop() {
-  int16_t left_y = analogRead(A0);
-  int16_t left_x = analogRead(A1);
+  int16_t left_y = analogRead(A3);
+  int16_t left_x = analogRead(A2);
 
-  int16_t right_x = analogRead(A2);
-  int16_t right_y = analogRead(A3);
+  int16_t right_y = analogRead(A1);
+  int16_t right_x = analogRead(A0);
+  
 
-  left_y = constrain(left_y, 520 ,1023);
+  /* left_y = constrain(left_y, 520 ,1023);
   left_y = map(left_y, 520, 1023, 0, 180);
   left_x = map(left_x, 0, 1023, -yawrate_max, yawrate_max); // deg/s
 
@@ -58,12 +59,13 @@ void loop() {
     right_y = map(right_y, 0, 1023, -rollangle_max, rollangle_max); // target angle in deg
     right_x = map(right_x, 0, 1023, -rollangle_max, rollangle_max); // target angle in deg
   }
-
-
-  int16_t data[5] = {left_y, left_x, right_y, right_x, toggle_flight_mode};
-  for (int i=0;i<5; i++) {
-    Serial.print(data[i]); Serial.print(" ,");
-  }
+*/
+  
+  Serial.print(left_y); Serial.print(",");  
+  Serial.print(left_x); Serial.print(",");  
+  Serial.print(right_y); Serial.print(",");  
+  Serial.print(right_x); Serial.print(",");  
+  Serial.print(digitalRead(D3)); Serial.print(",");  
   Serial.println(" ");
   
 }

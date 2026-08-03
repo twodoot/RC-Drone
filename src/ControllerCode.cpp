@@ -11,14 +11,24 @@ bool toggle_flight_mode = false;
 bool lastswitch = HIGH;
 bool curswitch;
 
+#define left_y_offset (170)
+#define left_x_offset (128)
+#define right_y_offset (150)
+#define right_x_offset (142)
+
+int16_t left_y;
+int16_t left_x;
+int16_t right_x;
+int16_t right_y;
+
 esp_now_peer_info_t slave;
 
 void setup() {
-  pinMode(D2,INPUT_PULLUP);
+  pinMode(D3,INPUT_PULLUP);
 
   WiFi.mode(WIFI_STA);
   esp_now_init();
-  uint8_t broadcastAddress[] = {0xE8, 0xF6, 0x0A, 0xC0, 0x46, 0x90};
+  uint8_t broadcastAddress[] = {0xE8, 0xF6, 0x0A, 0xC0, 0x4F, 0x20};
   memcpy(slave.peer_addr, broadcastAddress, 6);
   slave.channel = CHANNEL;
   slave.encrypt = false;
@@ -26,21 +36,33 @@ void setup() {
 }
 
 void loop() {
-  int16_t left_y = analogRead(A0);
-  int16_t left_x = analogRead(A1);
+  
+  left_y = analogRead(A3);
+  left_x = analogRead(A2);
 
-  int16_t right_x = analogRead(A2);
-  int16_t right_y = analogRead(A3);
+  right_y = analogRead(A1);
+  right_x = analogRead(A0);
+  
+  left_y += left_y_offset;
+  left_x += left_x_offset;
+  right_y += right_y_offset;
+  right_x += right_x_offset;
 
-  left_y = constrain(left_y, 520 ,1023);
-  left_y = map(left_y, 520, 1023, 0, 180);
-  left_x = map(left_x, 0, 1023, -yawrate_max, yawrate_max); // deg/s
+  
+  left_y = constrain(left_y, 2048 , (4095 - left_y_offset));
+  left_x = constrain(left_x, left_x_offset , (4095 - left_x_offset));
+  right_y = constrain(right_y, right_y_offset , (4095 - right_y_offset));
+  right_x = constrain(right_x, right_x_offset , (4095 - right_x_offset));
+
+  
+  left_y = map(left_y, 2048, (4095 - left_y_offset), 0, 180);
+  left_x = map(left_x, left_x_offset , (4095 - left_x_offset), -yawrate_max, yawrate_max); // deg/s
 
 
-  curswitch = digitalRead(D2);
+  curswitch = digitalRead(D3);
   if (curswitch == LOW && lastswitch == HIGH) {
     delay(50);
-    curswitch = digitalRead(D2);
+    curswitch = digitalRead(D3);
     if (curswitch == LOW ) {
       toggle_flight_mode = !toggle_flight_mode;
     }
@@ -49,14 +71,13 @@ void loop() {
 
   if (toggle_flight_mode) {
     // gyro flight
-    right_y = map(right_y, 0, 1023, -rollrate_max, rollrate_max); // deg/s
-    right_x = map(right_x, 0, 1023, -rollrate_max, rollrate_max); // deg/s
+    right_y = map(right_y, right_y_offset , (4095 - right_y_offset), -rollrate_max, rollrate_max); // deg/s
+    right_x = map(right_x, right_x_offset , (4095 - right_x_offset), -rollrate_max, rollrate_max); // deg/s
   } else {
     // accelerometer flight
-    right_y = map(right_y, 0, 1023, -rollangle_max, rollangle_max); // target angle in deg
-    right_x = map(right_x, 0, 1023, -rollangle_max, rollangle_max); // target angle in deg
+    right_y = map(right_y, right_y_offset , (4095 - right_y_offset), -rollangle_max, rollangle_max); // target angle in deg
+    right_x = map(right_x, right_x_offset , (4095 - right_x_offset), -rollangle_max, rollangle_max); // target angle in deg
   }
-
 
   int16_t data[5] = {left_y, left_x, right_y, right_x, toggle_flight_mode};
   esp_now_send(slave.peer_addr, (uint8_t *)data, sizeof(data));

@@ -33,9 +33,8 @@ void setup() {
 }
 
 void loop() {
-    String output = String(throttle_inp) + " " + String(yaw_inp) + " " + String(roll_x_inp) + " " + String(roll_y_inp) + " " + String(toggle_flight_mode);
-    Serial.print(output);
-    delay(1000);
+    String output = String(throttle_inp) + " " + String(yaw_inp) + " " + String(roll_y_inp) + " " + String(roll_x_inp) + " " + String(toggle_flight_mode);
+    Serial.println(output);
 
 }
 
