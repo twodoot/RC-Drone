@@ -228,7 +228,7 @@ void loop() {
 void OnDataRecv (const uint8_t *mac_addr, const uint8_t *data, int data_len) {
 
     int16_t newdata[5];
-    if (sizeof(data) == 10) {
+    if (data_len == 10) { //nominal message size
         memcpy(newdata, data, sizeof(newdata));
 
         throttle_inp = newdata[0];
