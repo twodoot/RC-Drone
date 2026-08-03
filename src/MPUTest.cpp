@@ -9,14 +9,10 @@
 
 #define CHANNEL 1
 
-Servo ESC1;
-Servo ESC2;
-Servo ESC3;
-Servo ESC4;
-
 Adafruit_MPU6050 mpu;
 sensors_event_t a, g, t;
 Calibration_Data cal;
+
 //other globals
 double dt, last_time = 5000;
 
@@ -30,14 +26,6 @@ double sigma_accel = 3; // standerd deviation of accelerometer error in degrees
 
 double kalman_roll_x_angle = 0, kalman_uncertainty_roll_x_angle = 2*2;
 double kalman_roll_y_angle = 0, kalman_uncertainty_roll_y_angle = 2*2;
-
-//constants for PIDs
-const double Kp_y, Ki_y, Kd_y; //yaw
-const double Kp_r_a, Ki_r_a, Kd_r_a; //angle
-const double Kp_r_g, Ki_r_g, Kd_r_g; //gyro
-
-//PID Integral cumulative errors
-double cumerror_yaw = 0, cumerror_roll_x_a = 0, cumerror_roll_y_a = 0, cumerror_roll_x_g = 0, cumerror_roll_y_g = 0;
 
 //inputs
 bool toggle_flight_mode;
@@ -58,7 +46,6 @@ struct Roll_Angles {
 
 // funcitons
 void OnDataRecv (const uint8_t *mac_addr, const uint8_t *data, int data_len);
-double PID (double lasterror, double error, double &Intg, double Kp, double Ki, double Kd);
 void KalmanRoll (double &kalman_angle, double &kalman_uncertainty, double gyro_input, double accel_angle);
 Roll_Angles Accelerometer_Angle (double a_x, double a_y, double a_z);
 Calibration_Data Calibrate_MPU ();
@@ -83,18 +70,9 @@ void setup() {
     esp_now_init();
     esp_now_register_recv_cb(OnDataRecv);
 
-    //ESC stuff
-    ESC1.attach(D9, 1000,2000);
-    ESC2.attach(D8, 1000,2000);
-    ESC3.attach(D7, 1000,2000);
-    ESC4.attach(D6, 1000,2000);
-    
 }
 
 void loop() {
-
-    //motor varaibles PWM
-    double mot1, mot2, mot3, mot4;
 
     //time stuff
     double now = millis();
@@ -105,8 +83,24 @@ void loop() {
     
     mpu.getEvent(&a, &g, &t);
 
+    Serial.print(a.acceleration.x); Serial.print(", ");
+    Serial.print(a.acceleration.y); Serial.print(", ");
+    Serial.print(a.acceleration.z); Serial.print(", ");
+    Serial.print(g.gyro.x); Serial.print(", ");
+    Serial.print(g.gyro.y); Serial.print(", ");
+    Serial.print(g.gyro.z); Serial.print(", "); Serial.print(" "); Serial.print(" , ");
+    
+    Serial.print(cal.a_x); Serial.print(", ");
+    Serial.print(cal.a_y); Serial.print(", ");
+    Serial.print(cal.a_z); Serial.print(", ");
+    Serial.print(cal.g_x); Serial.print(", ");
+    Serial.print(cal.g_y); Serial.print(", ");
+    Serial.print(cal.g_z);
+
+
+    /*
     a.acceleration.x -= cal.a_x;
-    a.acceleration.z -= cal.a_y;
+    a.acceleration.y -= cal.a_y;
     a.acceleration.z -= cal.a_z;
     g.gyro.x-= cal.g_x;
     g.gyro.y-= cal.g_y;
@@ -117,113 +111,9 @@ void loop() {
     g.gyro.z = g.gyro.z *180/3.14159;
     g.gyro.x = g.gyro.x *180/3.14159;
     g.gyro.y = g.gyro.y *180/3.14159;
-
-    //throttle
-    mot1, mot2, mot3, mot4 = throttle_inp;
-
-    //yaw
-    double yaw_error = yaw_inp - g.gyro.z;
-    
-    double temp_yaw_PID = PID(last_yaw_error, yaw_error, cumerror_yaw, Kp_y, Ki_y, Kd_y);
-
-
-    //mot 1 front left, mot 2 front right, mot 3 back left, mot4 back right
-
-
-    if (temp_yaw_PID > 0) {
-        mot1, mot3 -= temp_yaw_PID;
-    } else {
-        mot2, mot4 -= temp_yaw_PID;
-    }
-    last_yaw_error = yaw_error;
-
-    
-    //roll and pitch
-
-    if (toggle_flight_mode) {
-        //gyroflight
-
-        //change integral errors for angle flight to 0
-        cumerror_roll_x_a = 0;
-        cumerror_roll_y_a = 0;
-
-
-        //roll x (nose up and down)
-        double roll_x_error = roll_x_inp - g.gyro.x;
-
-        double temp_roll_x_PID = PID(last_roll_x_error, roll_x_error, cumerror_roll_x_g ,Kp_r_g, Ki_r_g, Kd_r_g);
-
-        if (temp_roll_x_PID > 0) {
-            mot3, mot4 -= temp_roll_x_PID;
-        } else {
-            mot1, mot2 -= temp_roll_x_PID;
-        }
-        last_roll_x_error = roll_x_error;
-
-        //roll y
-        double roll_y_error = roll_y_inp - g.gyro.y;
-
-        double temp_roll_y_PID = PID(last_roll_y_error, roll_y_error, cumerror_roll_y_g ,Kp_r_g, Ki_r_g, Kd_r_g);
-
-        if (temp_roll_y_PID > 0) {
-            mot2, mot4 -= temp_roll_y_PID;
-        } else {
-            mot1, mot3 -= temp_roll_y_PID;
-        }
-        last_roll_y_error = roll_y_error;
-
-    } else {
-        Roll_Angles rollangles = Accelerometer_Angle(a.acceleration.x, a.acceleration.y, a.acceleration.z);
-
-        //change integral errors for gyro flight to 0
-        cumerror_roll_x_g = 0;
-        cumerror_roll_y_g = 0;
-        
-        //kalman correceion code (test without first and then try to tune with it if needed)
-        
-        /*
-        KalmanRoll(kalman_roll_x_angle, kalman_uncertainty_roll_x_angle, g.gyro.x, rollangles.roll_x);
-        KalmanRoll(kalman_roll_y_angle, kalman_uncertainty_roll_y_angle, g.gyro.y, rollangles.roll_y);
-
-        rollangles.roll_x = kalman_roll_x_angle;
-        rollangles.roll_y = kalman_roll_y_angle;
-        */
-
-        //roll x
-
-        double roll_x_error = roll_x_inp - rollangles.roll_x;
-
-        double temp_roll_x_PID = PID(last_roll_x_error, roll_x_error, cumerror_roll_x_a ,Kp_r_a, Ki_r_a, Kd_r_a);
-
-        if (temp_roll_x_PID > 0) {
-            mot3, mot4 -= temp_roll_x_PID;
-        } else {
-            mot1, mot2 -= temp_roll_x_PID;
-        }
-        last_roll_x_error = roll_x_error;
-
-        //roll y
-
-        double roll_y_error = roll_y_inp - rollangles.roll_y;
-
-        double temp_roll_y_PID = PID(last_roll_y_error, roll_y_error, cumerror_roll_y_a, Kp_r_a, Ki_r_a, Kd_r_a);
-
-        if (temp_roll_y_PID > 0) {
-            mot2, mot4 -= temp_roll_y_PID;
-        } else {
-            mot1, mot3 -= temp_roll_y_PID;
-        }
-        last_roll_y_error = roll_y_error;
-
-    }
-
-    //output 4 different pwm signals
-    ESC1.write(mot1);
-    ESC2.write(mot2);
-    ESC3.write(mot3);
-    ESC4.write(mot4);
-    
+    */
 }
+
 
 void OnDataRecv (const uint8_t *mac_addr, const uint8_t *data, int data_len) {
 
@@ -239,16 +129,6 @@ void OnDataRecv (const uint8_t *mac_addr, const uint8_t *data, int data_len) {
     }
     
 
-}
-
-double PID (double lasterror, double error, double &Intg, double Kp, double Ki, double Kd) {
-
-    double Prop = error * Kp;
-    Intg += error * dt *Ki;
-    double Deri = ((error - lasterror)/ dt ) * Kd;
-
-    return Prop + Intg + Deri;
-    
 }
 
 void KalmanRoll (double &kalman_angle, double &kalman_uncertainty, double gyro_input, double accel_angle){
