@@ -9,6 +9,16 @@
 
 #define CHANNEL 1
 
+//structs
+struct Calibration_Data {
+    double a_x, a_y, a_z, g_x, g_y, g_z;
+
+};
+struct Roll_Angles {
+
+    double roll_x, roll_y;
+};
+
 Servo ESC1;
 Servo ESC2;
 Servo ESC3;
@@ -46,16 +56,6 @@ int16_t yaw_inp;
 int16_t roll_x_inp;
 int16_t roll_y_inp;
 
-//structs
-struct Calibration_Data {
-    double a_x, a_y, a_z, g_x, g_y, g_z;
-
-};
-struct Roll_Angles {
-
-    double roll_x, roll_y;
-};
-
 // funcitons
 void OnDataRecv (const uint8_t *mac_addr, const uint8_t *data, int data_len);
 double PID (double lasterror, double error, double &Intg, double Kp, double Ki, double Kd);
@@ -74,8 +74,8 @@ void setup() {
     mpu.setFilterBandwidth(MPU6050_BAND_44_HZ);
 
     //function to calibrate mpu
-    Calibration_Data cal = Calibrate_MPU();
-    cal.a_z + 9.80665;   // + cuz it is upsidedown and remove g from calibration as it stands upright when claibrating
+    cal = Calibrate_MPU();
+    cal.a_z += 9.80665;   // + cuz it is upsidedown and remove g from calibration as it stands upright when claibrating
 
     //esp stuff
     WiFi.mode(WIFI_STA);

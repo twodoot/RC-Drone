@@ -9,9 +9,22 @@
 
 #define CHANNEL 1
 
+//structs
+struct Calibration_Data {
+    double a_x, a_y, a_z, g_x, g_y, g_z;
+
+};
+
+
+struct Roll_Angles {
+
+    double roll_x, roll_y;
+};
+
 Adafruit_MPU6050 mpu;
 sensors_event_t a, g, t;
 Calibration_Data cal;
+
 
 //other globals
 double dt, last_time = 5000;
@@ -34,15 +47,6 @@ int16_t yaw_inp;
 int16_t roll_x_inp;
 int16_t roll_y_inp;
 
-//structs
-struct Calibration_Data {
-    double a_x, a_y, a_z, g_x, g_y, g_z;
-
-};
-struct Roll_Angles {
-
-    double roll_x, roll_y;
-};
 
 // funcitons
 void OnDataRecv (const uint8_t *mac_addr, const uint8_t *data, int data_len);
@@ -61,8 +65,8 @@ void setup() {
     mpu.setFilterBandwidth(MPU6050_BAND_44_HZ);
 
     //function to calibrate mpu
-    Calibration_Data cal = Calibrate_MPU();
-    cal.a_z + 9.80665;   // + cuz it is upsidedown and remove g from calibration as it stands upright when claibrating
+    cal = Calibrate_MPU();
+    cal.a_z += 9.80665;   // + cuz it is upsidedown and remove g from calibration as it stands upright when claibrating
 
     //esp stuff
     WiFi.mode(WIFI_STA);
@@ -83,22 +87,7 @@ void loop() {
     
     mpu.getEvent(&a, &g, &t);
 
-    Serial.print(a.acceleration.x); Serial.print(", ");
-    Serial.print(a.acceleration.y); Serial.print(", ");
-    Serial.print(a.acceleration.z); Serial.print(", ");
-    Serial.print(g.gyro.x); Serial.print(", ");
-    Serial.print(g.gyro.y); Serial.print(", ");
-    Serial.print(g.gyro.z); Serial.print(", "); Serial.print(" "); Serial.print(" , ");
     
-    Serial.print(cal.a_x); Serial.print(", ");
-    Serial.print(cal.a_y); Serial.print(", ");
-    Serial.print(cal.a_z); Serial.print(", ");
-    Serial.print(cal.g_x); Serial.print(", ");
-    Serial.print(cal.g_y); Serial.print(", ");
-    Serial.print(cal.g_z);
-
-
-    /*
     a.acceleration.x -= cal.a_x;
     a.acceleration.y -= cal.a_y;
     a.acceleration.z -= cal.a_z;
@@ -111,7 +100,22 @@ void loop() {
     g.gyro.z = g.gyro.z *180/3.14159;
     g.gyro.x = g.gyro.x *180/3.14159;
     g.gyro.y = g.gyro.y *180/3.14159;
-    */
+    
+    Serial.print(a.acceleration.x); Serial.print(", ");
+    Serial.print(a.acceleration.y); Serial.print(", ");
+    Serial.print(a.acceleration.z); Serial.print(", ");
+    Serial.print(g.gyro.x); Serial.print(", ");
+    Serial.print(g.gyro.y); Serial.print(", ");
+    Serial.print(g.gyro.z); Serial.print(", "); Serial.print(" "); Serial.print(" , ");
+    
+    Serial.print(cal.a_x); Serial.print(", ");
+    Serial.print(cal.a_y); Serial.print(", ");
+    Serial.print(cal.a_z); Serial.print(", ");
+    Serial.print(cal.g_x); Serial.print(", ");
+    Serial.print(cal.g_y); Serial.print(", ");
+    Serial.print(cal.g_z); Serial.println(" ");
+    delay(200);
+
 }
 
 
