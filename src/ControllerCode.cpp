@@ -4,7 +4,7 @@
 
 #define CHANNEL 1
 #define rollrate_max 360 // gyroscope rollrate maximum in deg/s
-#define rollangle_max 45 // accelerometer rollangle maximum in deg
+#define rollangle_max 35 // accelerometer rollangle maximum in deg
 #define yawrate_max 360 // mximum yawrate in deg/s
 
 bool toggle_flight_mode = false;
