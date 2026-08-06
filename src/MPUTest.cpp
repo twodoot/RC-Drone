@@ -8,6 +8,7 @@
 #include <ESP32Servo.h>
 
 #define CHANNEL 1
+#define pi 3.14159
 
 //structs
 struct Calibration_Data {
@@ -35,7 +36,7 @@ double last_roll_y_error = 0;
 
 //kalman filter
 double sigma_gyro = 0.5; //standerd deviation of gyroscope errorin degrees/second
-double sigma_accel = 3; // standerd deviation of accelerometer error in degrees
+double sigma_accel = 0.118; // standerd deviation of accelerometer error in degrees
 
 double kalman_roll_x_angle = 0, kalman_uncertainty_roll_x_angle = 2*2;
 double kalman_roll_y_angle = 0, kalman_uncertainty_roll_y_angle = 2*2;
@@ -110,31 +111,31 @@ void loop() {
         
         //kalman correceion code (test without first and then try to tune with it if needed)
         
-        /*
+        
         KalmanRoll(kalman_roll_x_angle, kalman_uncertainty_roll_x_angle, g.gyro.x, rollangles.roll_x);
         KalmanRoll(kalman_roll_y_angle, kalman_uncertainty_roll_y_angle, g.gyro.y, rollangles.roll_y);
 
         rollangles.roll_x = kalman_roll_x_angle;
         rollangles.roll_y = kalman_roll_y_angle;
-        */
+        
 
         //roll x
-
+/*
     Serial.print(a.acceleration.x); Serial.print(", ");
     Serial.print(a.acceleration.y); Serial.print(", ");
-    Serial.print(a.acceleration.z); Serial.print(", ");
+    Serial.print(a.acceleration.z); Serial.print(", "); Serial.print(", ");
 
     
 
 
-/*
+
     Serial.print(a.acceleration.x); Serial.print(", ");
     Serial.print(a.acceleration.y); Serial.print(", ");
     Serial.print(a.acceleration.z); Serial.print(", ");
     
     Serial.print(g.gyro.x); Serial.print(", ");
     Serial.print(g.gyro.y); Serial.print(", ");
-    Serial.print(g.gyro.z); Serial.print(", "); */ Serial.print(" "); Serial.print(" , ");
+    Serial.print(g.gyro.z); Serial.print(", ");  Serial.print(" "); Serial.print(" , ");*/
     
     /*
     Serial.print(cal.a_x); Serial.print(", ");
@@ -146,7 +147,7 @@ void loop() {
     */
 
     Serial.print(rollangles.roll_x); Serial.print(", "); Serial.print(rollangles.roll_y); Serial.println(" ");
-    delay(200);
+    
 
 }
 
@@ -173,6 +174,7 @@ void KalmanRoll (double &kalman_angle, double &kalman_uncertainty, double gyro_i
     double gain = kalman_uncertainty/(kalman_uncertainty + (sigma_accel * sigma_accel));
     kalman_angle = kalman_angle + gain * (accel_angle - kalman_angle);
     kalman_uncertainty = (1-gain)*kalman_uncertainty;
+    
 }
 
 Roll_Angles Accelerometer_Angle (sensors_vec_t a) {
@@ -180,9 +182,15 @@ Roll_Angles Accelerometer_Angle (sensors_vec_t a) {
     double roll_y;
     roll_x  = atan2(a.y,(sqrt((a.x*a.x)+ (a.z*a.z))))*180/3.14159;
     roll_y  = atan2(-a.x,(sqrt((a.y*a.y)+ (a.z*a.z))))*180/3.14159;
+
+    
+
+    Serial.print(roll_x); Serial.print(", ");
+    Serial.print(roll_y); Serial.print(", "); Serial.print(", ");
     
     // in case it flips over so it doesnt think its the right way up
-
+    /*
+    
     if (a.z <0) {
         if (abs(roll_x)>abs(roll_y)) {
         if (roll_x>0){
@@ -197,7 +205,7 @@ Roll_Angles Accelerometer_Angle (sensors_vec_t a) {
             roll_y = -90;
         }}
         
-    }
+    }*/
 
     return {roll_x , roll_y};
 
