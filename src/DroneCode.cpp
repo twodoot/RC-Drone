@@ -15,7 +15,6 @@ struct Calibration_Data {
 
 };
 struct Roll_Angles {
-
     double roll_x, roll_y;
 };
 
@@ -36,7 +35,7 @@ double last_roll_y_error = 0;
 
 //kalman filter
 double sigma_gyro = 0.5; //standerd deviation of gyroscope errorin degrees/second
-double sigma_accel = 3; // standerd deviation of accelerometer error in degrees
+double sigma_accel = 0.118; // standerd deviation of accelerometer error in degrees
 
 double kalman_roll_x_angle = 0, kalman_uncertainty_roll_x_angle = 2*2;
 double kalman_roll_y_angle = 0, kalman_uncertainty_roll_y_angle = 2*2;
@@ -60,7 +59,7 @@ int16_t roll_y_inp;
 void OnDataRecv (const uint8_t *mac_addr, const uint8_t *data, int data_len);
 double PID (double lasterror, double error, double &Intg, double Kp, double Ki, double Kd);
 void KalmanRoll (double &kalman_angle, double &kalman_uncertainty, double gyro_input, double accel_angle);
-Roll_Angles Accelerometer_Angle (double a_x, double a_y, double a_z);
+Roll_Angles Accelerometer_Angle (sensors_vec_t a);
 Calibration_Data Calibrate_MPU ();
 
 
@@ -118,6 +117,10 @@ void loop() {
     g.gyro.x = g.gyro.x *180/3.14159;
     g.gyro.y = g.gyro.y *180/3.14159;
 
+    // its upside down when im working with it so i want to treat it like its right way up
+
+    a.acceleration.z *= -1;
+
     //throttle
     mot1, mot2, mot3, mot4 = throttle_inp;
 
@@ -173,7 +176,7 @@ void loop() {
         last_roll_y_error = roll_y_error;
 
     } else {
-        Roll_Angles rollangles = Accelerometer_Angle(a.acceleration.x, a.acceleration.y, a.acceleration.z);
+        Roll_Angles rollangles = Accelerometer_Angle(a.acceleration);
 
         //change integral errors for gyro flight to 0
         cumerror_roll_x_g = 0;
@@ -181,13 +184,13 @@ void loop() {
         
         //kalman correceion code (test without first and then try to tune with it if needed)
         
-        /*
+        
         KalmanRoll(kalman_roll_x_angle, kalman_uncertainty_roll_x_angle, g.gyro.x, rollangles.roll_x);
         KalmanRoll(kalman_roll_y_angle, kalman_uncertainty_roll_y_angle, g.gyro.y, rollangles.roll_y);
 
         rollangles.roll_x = kalman_roll_x_angle;
         rollangles.roll_y = kalman_roll_y_angle;
-        */
+        
 
         //roll x
 
@@ -259,12 +262,38 @@ void KalmanRoll (double &kalman_angle, double &kalman_uncertainty, double gyro_i
     kalman_uncertainty = (1-gain)*kalman_uncertainty;
 }
 
-Roll_Angles Accelerometer_Angle (double a_x, double a_y, double a_z) {
+Roll_Angles Accelerometer_Angle (sensors_vec_t a) {
     double roll_x;
     double roll_y;
-    roll_x  = atan2(a_y,(sqrt((a_x*a_x)+ (a_z*a_z))))*180/3.14159;
-    roll_y  = atan2(-a_x,(sqrt((a_y*a_y)+ (a_z*a_z))))*180/3.14159;
+    roll_x  = atan2(a.y,(sqrt((a.x*a.x)+ (a.z*a.z))))*180/3.14159;
+    roll_y  = atan2(-a.x,(sqrt((a.y*a.y)+ (a.z*a.z))))*180/3.14159;
+
+    
+
+    Serial.print(roll_x); Serial.print(", ");
+    Serial.print(roll_y); Serial.print(", "); Serial.print(", ");
+    
+    // in case it flips over so it doesnt think its the right way up
+    
+    
+    if (a.z <0) {
+        if (abs(roll_x)>abs(roll_y)) {
+        if (roll_x>0){
+            roll_x = 90;
+        } else {
+            roll_x = -90;
+        }}else{
+
+        if (roll_y>0){
+            roll_y = 90;
+        } else {
+            roll_y = -90;
+        }}
+        
+    }
+
     return {roll_x , roll_y};
+
 }
 
 Calibration_Data Calibrate_MPU () {

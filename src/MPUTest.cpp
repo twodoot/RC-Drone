@@ -8,7 +8,6 @@
 #include <ESP32Servo.h>
 
 #define CHANNEL 1
-#define pi 3.14159
 
 //structs
 struct Calibration_Data {
@@ -18,7 +17,6 @@ struct Calibration_Data {
 
 
 struct Roll_Angles {
-
     double roll_x, roll_y;
 };
 
