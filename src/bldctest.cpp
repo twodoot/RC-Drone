@@ -33,20 +33,24 @@ void setup() {
 
     esp_now_init();
     esp_now_register_recv_cb(OnDataRecv);
-
+    
     //ESC stuff
-    ESC1.attach(D9, 1000,2000);
-    ESC2.attach(D8, 1000,2000);
+    ESC1.attach(18, 1000,2000);
+    /*ESC2.attach(D8, 1000,2000);
     ESC3.attach(D7, 1000,2000);
     ESC4.attach(D6, 1000,2000);
-    
+    */
 }
 
 void loop() {
+    
     String output = String(throttle_inp) + " " + String(yaw_inp) + " " + String(roll_y_inp) + " " + String(roll_x_inp) + " " + String(toggle_flight_mode);
-    Serial.println(output);
-
+    Serial.println(output); 
+    
+    
+    Serial.println(throttle_inp); 
     ESC1.write(throttle_inp);
+    
 
 }
 

@@ -11,7 +11,7 @@ bool toggle_flight_mode = false;
 bool lastswitch = HIGH;
 bool curswitch;
 
-#define left_y_offset (170)
+#define left_y_offset (157.95)
 #define left_x_offset (128)
 #define right_y_offset (150)
 #define right_x_offset (142)
@@ -49,6 +49,7 @@ void loop() {
   right_x += right_x_offset;
 
   
+  
   left_y = constrain(left_y, 2048 , (4095 - left_y_offset));
   left_x = constrain(left_x, left_x_offset , (4095 - left_x_offset));
   right_y = constrain(right_y, right_y_offset , (4095 - right_y_offset));
@@ -78,6 +79,12 @@ void loop() {
     right_y = map(right_y, right_y_offset , (4095 - right_y_offset), -rollangle_max, rollangle_max); // target angle in deg
     right_x = map(right_x, right_x_offset , (4095 - right_x_offset), -rollangle_max, rollangle_max); // target angle in deg
   }
+
+  Serial.print(left_y); Serial.print(" ,");
+  Serial.print(left_x); Serial.print(" ,");
+  Serial.print(right_y); Serial.print(" ,");
+  Serial.print(right_x); Serial.print(" ,");
+  Serial.print(toggle_flight_mode); Serial.println(" ");
 
   int16_t data[5] = {left_y, left_x, right_y, right_x, toggle_flight_mode};
   esp_now_send(slave.peer_addr, (uint8_t *)data, sizeof(data));
