@@ -42,7 +42,8 @@ void loop() {
 
   right_y = analogRead(A1);
   right_x = analogRead(A0);
-  
+
+
   left_y += left_y_offset;
   left_x += left_x_offset;
   right_y += right_y_offset;

@@ -5,7 +5,7 @@
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <math.h>
-#include <ESP32Servo.h>
+#include <Servo.h>
 
 #define CHANNEL 1
 
@@ -16,10 +16,7 @@ int16_t yaw_inp;
 int16_t roll_x_inp;
 int16_t roll_y_inp;
 
-Servo ESC1;
-Servo ESC2;
-Servo ESC3;
-Servo ESC4;
+Servo ESC = Servo();
 
 // funcitons
 void OnDataRecv (const uint8_t *mac_addr, const uint8_t *data, int data_len);
@@ -34,22 +31,34 @@ void setup() {
     esp_now_init();
     esp_now_register_recv_cb(OnDataRecv);
     
+
+    //pinMode(18, OUTPUT);
+   // pinMode(17, OUTPUT);
+    //pinMode(10, OUTPUT);
+    //pinMode(9, OUTPUT);
+
+
+
+
     //ESC stuff
-    ESC1.attach(18, 1000,2000);
-    /*ESC2.attach(D8, 1000,2000);
-    ESC3.attach(D7, 1000,2000);
-    ESC4.attach(D6, 1000,2000);
-    */
+    
+
+    
+    
 }
 
 void loop() {
     
+    Serial.print("worked");
+
     String output = String(throttle_inp) + " " + String(yaw_inp) + " " + String(roll_y_inp) + " " + String(roll_x_inp) + " " + String(toggle_flight_mode);
     Serial.println(output); 
     
     
-    Serial.println(throttle_inp); 
-    ESC1.write(throttle_inp);
+    ESC.writeMicroseconds(17,throttle_inp); // MOT1
+    ESC.writeMicroseconds(18,throttle_inp); //MOT2
+    ESC.writeMicroseconds(9,throttle_inp); //MOT3
+    ESC.writeMicroseconds(10,throttle_inp); //MOT4
     
 
 }
@@ -61,11 +70,25 @@ void OnDataRecv (const uint8_t *mac_addr, const uint8_t *data, int data_len) {
     int16_t newdata[5];
     if (data_len == 10) {
         memcpy(newdata, data, sizeof(newdata));
+        
+
 
         throttle_inp = newdata[0];
         yaw_inp = newdata[1];
         roll_y_inp = newdata[2];
         roll_x_inp = newdata[3];
         toggle_flight_mode = newdata[4];
+
+        throttle_inp = constrain(throttle_inp, 0, 180);
+        throttle_inp = map(throttle_inp, 0, 180 , 1000, 1100);
+
+        yaw_inp = constrain(yaw_inp, 0,360);
+        yaw_inp = map(yaw_inp, 0,360, 1000, 1100);
+
+        roll_y_inp = constrain(roll_y_inp, 0,35);
+        roll_y_inp = map(roll_y_inp, 0,35, 1000, 1100);
+
+        roll_x_inp = constrain(roll_x_inp, 0,35);
+        roll_x_inp = map(roll_x_inp, 0,35, 1000, 1100);
     }
 }
