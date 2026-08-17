@@ -26,7 +26,7 @@ Calibration_Data cal;
 
 //other globals
 double dt;
-double last_time = 5000;
+double last_time = 10000;
 
 double last_yaw_error = 0;
 double last_roll_x_error = 0;
@@ -41,7 +41,7 @@ double kalman_roll_y_angle = 0, kalman_uncertainty_roll_y_angle = 2*2;
 
 //constants for PIDs
 const double Kp_y = 0, Ki_y = 0, Kd_y = 0; //yaw
-const double Kp_r_a = 0, Ki_r_a = 0, Kd_r_a = 0; //angle
+const double Kp_r_a = 2, Ki_r_a = 0.075, Kd_r_a = 0; //angle
 const double Kp_r_g = 0, Ki_r_g = 0, Kd_r_g = 0; //gyro
 
 //PID Integral cumulative errors
@@ -80,6 +80,13 @@ void setup() {
 
     esp_now_init();
     esp_now_register_recv_cb(OnDataRecv);
+
+    //motor arm time
+    ESC.writeMicroseconds(17,1000); // MOT1
+    ESC.writeMicroseconds(18,1000); //MOT2
+    ESC.writeMicroseconds(9,1000); //MOT3
+    ESC.writeMicroseconds(10,1000); //MOT4
+    delay(5000);
 }
 
 void loop() {
@@ -226,10 +233,39 @@ void loop() {
     mot3 +=1000;
     mot4 +=1000;
 
+
+    if (mot1 <1050) {
+        mot1 = 1000;
+    }
+    if (mot2 <1050) {
+        mot2 = 1000;
+    }
+    if (mot3 <1050) {
+        mot3 = 1000;
+    }
+    if (mot4 <1050) {
+        mot4 = 1000;
+    }
+
+    if (a.acceleration.z <0) {
+        mot1 = 1000;
+    }
+    if (a.acceleration.z <0) {
+        mot2 = 1000;
+    }
+    if (a.acceleration.z <0) {
+        mot3 = 1000;
+    }
+    if (a.acceleration.z <0) {
+        mot4 = 1000;
+    }
+
+
     mot1 = constrain(mot1 , 1000, 2000);
     mot2 = constrain(mot2 , 1000, 2000);
     mot3 = constrain(mot3 , 1000, 2000);
     mot4 = constrain(mot4 , 1000, 2000);
+
 
 
     //debug prints
@@ -298,7 +334,7 @@ Roll_Angles Accelerometer_Angle (sensors_vec_t a) {
     
     // in case it flips over so it doesnt think its the right way up
     
-    
+    /*
     if (a.z <0) {
         if (abs(roll_x)>abs(roll_y)) {
         if (roll_x>0){
@@ -313,7 +349,7 @@ Roll_Angles Accelerometer_Angle (sensors_vec_t a) {
             roll_y = -90;
         }}
         
-    }
+    }*/
 
     return {roll_x , roll_y};
 
