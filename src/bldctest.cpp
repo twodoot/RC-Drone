@@ -56,9 +56,9 @@ void loop() {
     
     
     ESC.writeMicroseconds(17,throttle_inp); // MOT1
-    ESC.writeMicroseconds(18,throttle_inp); //MOT2
-    ESC.writeMicroseconds(9,throttle_inp); //MOT3
-    ESC.writeMicroseconds(10,throttle_inp); //MOT4
+    ESC.writeMicroseconds(18,yaw_inp); //MOT2
+    ESC.writeMicroseconds(9,roll_y_inp); //MOT3
+    ESC.writeMicroseconds(10,roll_x_inp); //MOT4
     
 
 }
@@ -79,8 +79,8 @@ void OnDataRecv (const uint8_t *mac_addr, const uint8_t *data, int data_len) {
         roll_x_inp = newdata[3];
         toggle_flight_mode = newdata[4];
 
-        throttle_inp = constrain(throttle_inp, 0, 180);
-        throttle_inp = map(throttle_inp, 0, 180 , 1000, 1100);
+        throttle_inp = constrain(throttle_inp, 0, 1000);
+        throttle_inp = map(throttle_inp, 0, 1000 , 1000, 1100);
 
         yaw_inp = constrain(yaw_inp, 0,360);
         yaw_inp = map(yaw_inp, 0,360, 1000, 1100);

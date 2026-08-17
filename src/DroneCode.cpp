@@ -5,7 +5,7 @@
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <math.h>
-#include <ESP32Servo.h>
+#include <Servo.h>
 
 #define CHANNEL 1
 
@@ -18,16 +18,15 @@ struct Roll_Angles {
     double roll_x, roll_y;
 };
 
-Servo ESC1;
-Servo ESC2;
-Servo ESC3;
-Servo ESC4;
+Servo ESC = Servo();
 
 Adafruit_MPU6050 mpu;
 sensors_event_t a, g, t;
 Calibration_Data cal;
+
 //other globals
-double dt, last_time = 5000;
+double dt;
+double last_time = 5000;
 
 double last_yaw_error = 0;
 double last_roll_x_error = 0;
@@ -41,9 +40,9 @@ double kalman_roll_x_angle = 0, kalman_uncertainty_roll_x_angle = 2*2;
 double kalman_roll_y_angle = 0, kalman_uncertainty_roll_y_angle = 2*2;
 
 //constants for PIDs
-const double Kp_y, Ki_y, Kd_y; //yaw
-const double Kp_r_a, Ki_r_a, Kd_r_a; //angle
-const double Kp_r_g, Ki_r_g, Kd_r_g; //gyro
+const double Kp_y = 0, Ki_y = 0, Kd_y = 0; //yaw
+const double Kp_r_a = 0, Ki_r_a = 0, Kd_r_a = 0; //angle
+const double Kp_r_g = 0, Ki_r_g = 0, Kd_r_g = 0; //gyro
 
 //PID Integral cumulative errors
 double cumerror_yaw = 0, cumerror_roll_x_a = 0, cumerror_roll_y_a = 0, cumerror_roll_x_g = 0, cumerror_roll_y_g = 0;
@@ -81,13 +80,6 @@ void setup() {
 
     esp_now_init();
     esp_now_register_recv_cb(OnDataRecv);
-
-    //ESC stuff
-    ESC1.attach(D9, 1000,2000);
-    ESC2.attach(D8, 1000,2000);
-    ESC3.attach(D7, 1000,2000);
-    ESC4.attach(D6, 1000,2000);
-    
 }
 
 void loop() {
@@ -121,8 +113,19 @@ void loop() {
 
     a.acceleration.z *= -1;
 
+    // so its correct for drone
+
+    double temp_swap = a.acceleration.x;
+    a.acceleration.x = a.acceleration.y;
+    a.acceleration.y = temp_swap;
+    a.acceleration.x *= -1;
+    a.acceleration.y *= -1;
+
     //throttle
-    mot1, mot2, mot3, mot4 = throttle_inp;
+    mot1 = throttle_inp;
+    mot2 = throttle_inp;
+    mot3 = throttle_inp;
+    mot4 = throttle_inp;
 
     //yaw
     double yaw_error = yaw_inp - g.gyro.z;
@@ -130,14 +133,12 @@ void loop() {
     double temp_yaw_PID = PID(last_yaw_error, yaw_error, cumerror_yaw, Kp_y, Ki_y, Kd_y);
 
 
-    //mot 1 front left, mot 2 front right, mot 3 back left, mot4 back right
+    //mot 1 front left cc, mot 2 front right c, mot 3 back left c, mot4 back right cc
 
 
-    if (temp_yaw_PID > 0) {
-        mot1, mot3 -= temp_yaw_PID;
-    } else {
-        mot2, mot4 -= temp_yaw_PID;
-    }
+    mot2 -= temp_yaw_PID; mot3 -= temp_yaw_PID;  // clock mot
+    mot1 += temp_yaw_PID; mot4 += temp_yaw_PID; // cclock mot 
+
     last_yaw_error = yaw_error;
 
     
@@ -151,16 +152,14 @@ void loop() {
         cumerror_roll_y_a = 0;
 
 
-        //roll x (nose up and down)
+        //roll x 
         double roll_x_error = roll_x_inp - g.gyro.x;
 
         double temp_roll_x_PID = PID(last_roll_x_error, roll_x_error, cumerror_roll_x_g ,Kp_r_g, Ki_r_g, Kd_r_g);
 
-        if (temp_roll_x_PID > 0) {
-            mot3, mot4 -= temp_roll_x_PID;
-        } else {
-            mot1, mot2 -= temp_roll_x_PID;
-        }
+        mot2 -= temp_roll_x_PID; mot4 -= temp_roll_x_PID;  // mots on right 
+        mot1 += temp_roll_x_PID; mot3 += temp_roll_x_PID; // mots on left
+
         last_roll_x_error = roll_x_error;
 
         //roll y
@@ -168,14 +167,13 @@ void loop() {
 
         double temp_roll_y_PID = PID(last_roll_y_error, roll_y_error, cumerror_roll_y_g ,Kp_r_g, Ki_r_g, Kd_r_g);
 
-        if (temp_roll_y_PID > 0) {
-            mot2, mot4 -= temp_roll_y_PID;
-        } else {
-            mot1, mot3 -= temp_roll_y_PID;
-        }
+        mot1 -= temp_roll_y_PID; mot2 -= temp_roll_y_PID;  // mots front
+        mot3 += temp_roll_y_PID; mot4 += temp_roll_y_PID; // mots rear
+
         last_roll_y_error = roll_y_error;
 
     } else {
+
         Roll_Angles rollangles = Accelerometer_Angle(a.acceleration);
 
         //change integral errors for gyro flight to 0
@@ -198,11 +196,9 @@ void loop() {
 
         double temp_roll_x_PID = PID(last_roll_x_error, roll_x_error, cumerror_roll_x_a ,Kp_r_a, Ki_r_a, Kd_r_a);
 
-        if (temp_roll_x_PID > 0) {
-            mot3, mot4 -= temp_roll_x_PID;
-        } else {
-            mot1, mot2 -= temp_roll_x_PID;
-        }
+        mot2 -= temp_roll_x_PID; mot4 -= temp_roll_x_PID;  // mots on right 
+        mot1 += temp_roll_x_PID; mot3 += temp_roll_x_PID; // mots on left
+
         last_roll_x_error = roll_x_error;
 
         //roll y
@@ -211,20 +207,47 @@ void loop() {
 
         double temp_roll_y_PID = PID(last_roll_y_error, roll_y_error, cumerror_roll_y_a, Kp_r_a, Ki_r_a, Kd_r_a);
 
-        if (temp_roll_y_PID > 0) {
-            mot2, mot4 -= temp_roll_y_PID;
-        } else {
-            mot1, mot3 -= temp_roll_y_PID;
-        }
+        mot1 -= temp_roll_y_PID; mot2 -= temp_roll_y_PID;  // mots front
+        mot3 += temp_roll_y_PID; mot4 += temp_roll_y_PID; // mots rear
+
         last_roll_y_error = roll_y_error;
 
+
+        //kalman debug prints
+        Serial.print("kalman roll angles (x,y): ");
+
+        Serial.print(rollangles.roll_x); Serial.print(", "); Serial.print(rollangles.roll_y); Serial.print("  ");
     }
 
+    // turn to pwm signals
+
+    mot1 +=1000;
+    mot2 +=1000;
+    mot3 +=1000;
+    mot4 +=1000;
+
+    mot1 = constrain(mot1 , 1000, 2000);
+    mot2 = constrain(mot2 , 1000, 2000);
+    mot3 = constrain(mot3 , 1000, 2000);
+    mot4 = constrain(mot4 , 1000, 2000);
+
+
+    //debug prints
+    Serial.print("mots 1-4: ");
+
+    Serial.print(mot1); Serial.print(", ");
+    Serial.print(mot2); Serial.print(", ");
+    Serial.print(mot3); Serial.print(", ");
+    Serial.print(mot4); Serial.print(", ");
+    
+    Serial.println(" ");
+
+
     //output 4 different pwm signals
-    ESC1.write(mot1);
-    ESC2.write(mot2);
-    ESC3.write(mot3);
-    ESC4.write(mot4);
+    ESC.writeMicroseconds(17,mot1); // MOT1
+    ESC.writeMicroseconds(18,mot2); //MOT2
+    ESC.writeMicroseconds(9,mot3); //MOT3
+    ESC.writeMicroseconds(10,mot4); //MOT4
     
 }
 

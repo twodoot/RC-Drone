@@ -24,7 +24,7 @@ int16_t right_y;
 esp_now_peer_info_t slave;
 
 void setup() {
-  pinMode(D3,INPUT_PULLUP);
+  pinMode(6,INPUT_PULLUP);
 
   WiFi.mode(WIFI_STA);
   esp_now_init();
@@ -37,11 +37,11 @@ void setup() {
 
 void loop() {
   
-  left_y = analogRead(A3);
-  left_x = analogRead(A2);
+  left_y = analogRead(4);
+  left_x = analogRead(3);
 
-  right_y = analogRead(A1);
-  right_x = analogRead(A0);
+  right_y = analogRead(2);
+  right_x = analogRead(1);
 
 
   left_y += left_y_offset;
@@ -57,14 +57,14 @@ void loop() {
   right_x = constrain(right_x, right_x_offset , (4095 - right_x_offset));
 
   
-  left_y = map(left_y, 2048, (4095 - left_y_offset), 0, 180);
+  left_y = map(left_y, 2048, (4095 - left_y_offset), 0, 1000);
   left_x = map(left_x, left_x_offset , (4095 - left_x_offset), -yawrate_max, yawrate_max); // deg/s
 
 
-  curswitch = digitalRead(D3);
+  curswitch = digitalRead(6);
   if (curswitch == LOW && lastswitch == HIGH) {
     delay(50);
-    curswitch = digitalRead(D3);
+    curswitch = digitalRead(6);
     if (curswitch == LOW ) {
       toggle_flight_mode = !toggle_flight_mode;
     }

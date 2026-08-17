@@ -5,7 +5,6 @@
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <math.h>
-#include <ESP32Servo.h>
 
 #define CHANNEL 1
 
@@ -102,6 +101,14 @@ void loop() {
     // its upside down when im working with it so i want to treat it like its right way up
 
     a.acceleration.z *= -1;
+    
+    // so its correct for drone
+
+    double temp_swap = a.acceleration.x;
+    a.acceleration.x = a.acceleration.y;
+    a.acceleration.y = temp_swap;
+    a.acceleration.x *= -1;
+    a.acceleration.y *= -1;
 
     Roll_Angles rollangles = Accelerometer_Angle(a.acceleration);
 

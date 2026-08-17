@@ -6,7 +6,7 @@
 #define rollrate_max 360 // gyroscope rollrate maximum in deg/s
 #define rollangle_max 35 // accelerometer rollangle maximum in deg
 #define yawrate_max 360 // mximum yawrate in deg/s
-#define values_per_loop 200 // maximum increase in throttle per 1000 loops
+#define values_per_loop 600 // maximum increase in throttle per 1000 loops
 
 bool toggle_flight_mode = false;
 bool lastswitch = HIGH;
@@ -26,7 +26,7 @@ int16_t right_y;
 esp_now_peer_info_t slave;
 
 void setup() {
-  pinMode(D3,INPUT_PULLUP);
+  pinMode(6,INPUT_PULLUP);
 
   WiFi.mode(WIFI_STA);
   esp_now_init();
@@ -39,11 +39,11 @@ void setup() {
 
 void loop() {
   
-  left_y = analogRead(A3);
-  left_x = analogRead(A2);
+  left_y = analogRead(4);
+  left_x = analogRead(3);
 
-  right_y = analogRead(A1);
-  right_x = analogRead(A0);
+  right_y = analogRead(2);
+  right_x = analogRead(1);
   
   left_y += left_y_offset;
   left_x += left_x_offset;
@@ -64,16 +64,16 @@ void loop() {
   }
 
 
-  throttle = constrain(throttle, 0, 180);
+  throttle = constrain(throttle, 0, 1000);
   left_y = throttle; // for outputing to drone
 
   left_x = map(left_x, left_x_offset , (4095 - left_x_offset), -yawrate_max, yawrate_max); // deg/s
 
 
-  curswitch = digitalRead(D3);
+  curswitch = digitalRead(6);
   if (curswitch == LOW && lastswitch == HIGH) {
     delay(50);
-    curswitch = digitalRead(D3);
+    curswitch = digitalRead(6);
     if (curswitch == LOW ) {
       toggle_flight_mode = !toggle_flight_mode;
     }
@@ -89,6 +89,13 @@ void loop() {
     right_y = map(right_y, right_y_offset , (4095 - right_y_offset), -rollangle_max, rollangle_max); // target angle in deg
     right_x = map(right_x, right_x_offset , (4095 - right_x_offset), -rollangle_max, rollangle_max); // target angle in deg
   }
+
+
+  Serial.print(left_y); Serial.print(" ,");
+  Serial.print(left_x); Serial.print(" ,");
+  Serial.print(right_y); Serial.print(" ,");
+  Serial.print(right_x); Serial.print(" ,");
+  Serial.print(toggle_flight_mode); Serial.println(" ");
 
   int16_t data[5] = {(int16_t)left_y, left_x, right_y, right_x, toggle_flight_mode};
   esp_now_send(slave.peer_addr, (uint8_t *)data, sizeof(data));
