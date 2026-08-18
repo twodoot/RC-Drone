@@ -3,10 +3,10 @@
 #include <WiFi.h>
 
 #define CHANNEL 1
-#define rollrate_max 360 // gyroscope rollrate maximum in deg/s
+#define rollrate_max 150 // gyroscope rollrate maximum in deg/s
 #define rollangle_max 15 // accelerometer rollangle maximum in deg
-#define yawrate_max 360 // mximum yawrate in deg/s
-#define values_per_loop 230 // maximum increase in throttle per 1000 loops
+#define yawrate_max 150 // maximum yawrate in deg/s
+#define values_per_loop 180 // maximum increase in throttle per 1000 loops
 
 bool toggle_flight_mode = false;
 bool lastswitch = HIGH;
@@ -80,7 +80,7 @@ void loop() {
   }
   lastswitch = curswitch;
 
-  if (toggle_flight_mode) {
+  if (!toggle_flight_mode) {
     // gyro flight
     right_y = map(right_y, right_y_offset , (4095 - right_y_offset), -rollrate_max, rollrate_max); // deg/s
     right_x = map(right_x, right_x_offset , (4095 - right_x_offset), -rollrate_max, rollrate_max); // deg/s

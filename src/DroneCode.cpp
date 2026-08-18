@@ -42,7 +42,7 @@ double kalman_roll_y_angle = 0, kalman_uncertainty_roll_y_angle = 2*2;
 //constants for PIDs
 const double Kp_y = 0, Ki_y = 0, Kd_y = 0; //yaw
 const double Kp_r_a = 2, Ki_r_a = 0.075, Kd_r_a = 0; //angle
-const double Kp_r_g = 0, Ki_r_g = 0, Kd_r_g = 0; //gyro
+const double Kp_r_g = 0.5, Ki_r_g = 0, Kd_r_g = 0; //gyro
 
 //PID Integral cumulative errors
 double cumerror_yaw = 0, cumerror_roll_x_a = 0, cumerror_roll_y_a = 0, cumerror_roll_x_g = 0, cumerror_roll_y_g = 0;
@@ -116,6 +116,8 @@ void loop() {
     g.gyro.x = g.gyro.x *180/3.14159;
     g.gyro.y = g.gyro.y *180/3.14159;
 
+    
+
     // its upside down when im working with it so i want to treat it like its right way up
 
     a.acceleration.z *= -1;
@@ -127,6 +129,18 @@ void loop() {
     a.acceleration.y = temp_swap;
     a.acceleration.x *= -1;
     a.acceleration.y *= -1;
+
+    temp_swap = g.gyro.x;
+    g.gyro.x = g.gyro.y;
+    g.gyro.y = temp_swap;
+    g.gyro.x *= -1;
+    g.gyro.y *= -1;
+
+    Serial.print("gyro (x,y): "); Serial.print(g.gyro.x); Serial.print(", ");
+    Serial.print(g.gyro.y); Serial.print("  ");
+
+    
+
 
     //throttle
     mot1 = throttle_inp;
@@ -151,7 +165,7 @@ void loop() {
     
     //roll and pitch
 
-    if (toggle_flight_mode) {
+    if (!toggle_flight_mode) {
         //gyroflight
 
         //change integral errors for angle flight to 0
