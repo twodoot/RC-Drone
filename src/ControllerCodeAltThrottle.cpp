@@ -15,8 +15,8 @@ double throttle;
 
 #define left_y_offset (157.95)
 #define left_x_offset (128)
-#define right_y_offset (150)
-#define right_x_offset (142)
+#define right_y_offset (149.5)
+#define right_x_offset (130)
 
 double left_y;
 int16_t left_x;
