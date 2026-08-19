@@ -40,9 +40,9 @@ double kalman_roll_x_angle = 0, kalman_uncertainty_roll_x_angle = 2*2;
 double kalman_roll_y_angle = 0, kalman_uncertainty_roll_y_angle = 2*2;
 
 //constants for PIDs
-const double Kp_y = 0, Ki_y = 0, Kd_y = 0; //yaw
+const double Kp_y = 0.25, Ki_y = 0, Kd_y = 0; //yaw
 const double Kp_r_a = 2, Ki_r_a = 0.075, Kd_r_a = 0; //angle
-const double Kp_r_g = 0.5, Ki_r_g = 0, Kd_r_g = 0; //gyro
+const double Kp_r_g = 0.20, Ki_r_g = 0.04, Kd_r_g = 0; //gyro
 
 //PID Integral cumulative errors
 double cumerror_yaw = 0, cumerror_roll_x_a = 0, cumerror_roll_y_a = 0, cumerror_roll_x_g = 0, cumerror_roll_y_g = 0;
