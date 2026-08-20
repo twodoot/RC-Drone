@@ -1,13 +1,13 @@
 # RC Drone
 	
 This is a project in which I am making an RC Drone and controller from scratch with 2 arduino nano ESP32s.  <br>   
-Both the Drone and Controller are 3D printed in 2 main parts, and assembled with various sized bolts, nuts and standoffs, (as well as 4 3d printed landing legs for the drone).  <br>  
+Both the Drone and Controller are 3D printed, and assembled with various sized bolts and stand-offs.  <br>  
 I'm making this project for personal experience in hardware and software design as it is my first embedded system project. <br>  
 	
 ![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Drone/Drone_Image_1.png) <br> Image of Drone CAD <br> <br>
 ![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Drone/Drone_Image_2.png) <br> Top view of Drone CAD <br> <br>
-![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Controller/Controller_Image_1.png) <br> Controller CAD with lid <br> <br>
-![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Controller/Controller_Image_2.png) <br> Controller CAD without lid <br> <br>
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Controller/Controller_Image_1.png) <br> Controller with lid <br> <br>
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Controller/Controller_Image_2.png) <br> Controller without lid <br> <br>
 	
 ## Parts List
 	
@@ -70,7 +70,7 @@ extract supports from the controller body:
 (pic after)
 
 sand down the Drawer until it fits stiffly into the body slot for the power bank underneath but doesn't  slide out easily.
-(pic of drawer partially inside body)
+(pic of drawer inside body)
 
 first screw in and screw out M1.6 bolts out of the arduino stand-off locations on the controller to widen the tolerances.
 
@@ -94,19 +94,6 @@ connect a USBC to USBA cable that just reaches the power bank underneath to the 
 optionally the lid can also be put on and even without screws the fit is quite tight so they aren't necessary at all but if you do want to screw it in M3 screws are needed 
 (pic of controller with lid)
 
-
-
-![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Controller/Controller_Assembly_Nano_Standoffs.png)
-
-![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Controller/Controller_Assembly_Nano_Spacers.png)
-
-![images](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Controller/Controller_Assembly_Nano_Bolts.png)
-
-![images](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Controller/Controller_Assembly_Joystick_Spacers.png)
-
-![iamge](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Controller/Controller_Assembly_Battery_Compartment.png)
-
-![iamge](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Controller/Controller_Assembly_Lid_Bolts.png) <br> <br> 
 
 ### Drone:
 
