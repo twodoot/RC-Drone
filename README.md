@@ -104,28 +104,31 @@ optionally the lid can also be put on and even without screws the fit is quite t
 
 **2.** Connecting the drone arduino and the MPU-6050 IMU: 4 wires will need to be soldered, cut off wire about 20mm long with both ends exposed. Solder one end of the wires onto the MPU-6050 soldering A4 to SDA and A5 to SCL, GND to GND and 3.3V to VCC.
 
-(pic of IMU soldered to arduino)
-
 ![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Wiring%20Diagrams/Drone%20Wiring%20Diagram.png)
 
 Screw in M3 bolts to widen the tolerances on the holes for  the mounting of MPU-6050 into drone top part then cut out a piece of the stiff foam to act as a shock absorber and stand-off for the MPU-6050 and screw in the MPU-6050 to the top part of the drone., ensure that these bolts are cut down to size so that they don't poke out of the top of the drone but fit it perfectly because the battery will be there. To mount the MPU-6050 it should be noted that it should be mounted upside down with the bolts to the right if you are looking at the drone from its rear (USB port of arduino is in rear).
 
-(pic of MPU-6050 attached to lid)
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Drone/Drone_MPU_LID.jpeg)
 
 connect short male header wires onto D6-D9 pins of the drone arduino
 
-(pic of the above)
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Drone/Drone_Arduino_PWMs.png)
 
 solder a male headers onto the GND and Power wires of the USBC to bare wires cable
-(pic of above)
+
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Drone/Drone_USB_Headers.png)
 
 Then mount the arduino onto the bottom part of the drone in a method identical to the one previously mentioned with the controller.
 
-(pic of top and bottom attached to the two components)
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Drone/Drone_Arduino_Mounted.png)
 
 then insert the M5 70mm into the top of the drone top and screw them down until they around 30mm below the top part  with the rest still sticking out the top, then screw them into the base part of the drone until they just   don't stick out the bottom, then screw them into the legs which are kept pressed into the bottom until they are screwed in and tighten the bolt to tighten the leg orientation and prevent wobbling.
 
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Drone/Drone_Frame_Assembled.png)
+
 solder 2.5mm male banana connectors to each bare wire of the motor (if not already attached)
+
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Drone/Drone_Bulltets_Motor.png)
 
 Then also screw in the motors into the base part from the bottom with M3 bolts.
 
@@ -136,15 +139,7 @@ then connect the ESCs power together with the XT-60 1 female -> 2 male splitters
 Then route the BEC wires of the ESC through the others to keep them in place at bottom of drone and around the sides to connect into the D6-D9 male headers
 also connect the USBC 5 volt and GND to the respective 5 volt and GND of a BEC and around the drone so that it can connect to the drone arduino.
 
-![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Drone/Assembly_Drone_Nano.png)
-![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Drone/Assembly_Drone_Nano_Nuts.png)
-![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Drone/Assembly_Drone_MPU.png)
-![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Drone/Assembly_Drone_MPU_Bolt_Length.png)
-![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Drone/Assembly_Drone_Bolts_Just_Not_Out.png)
-![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Drone/Assembly_Drone_Legs_Structural.png)
-![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Drone/Assembly_Drone_ESCs.png)
-![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Drone/Assembly_Drone_Motors.png)
-![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Drone/Assembly_Drone_Battery.png)  <br>  <br> 
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Drone/Drone_Electronics_Mounted.png)
 
 ## Code
 
