@@ -4,8 +4,7 @@ This is a project in which I am making an RC Drone and controller from scratch w
 Both the Drone and Controller are 3D printed, and assembled with various sized bolts and stand-offs.  <br>  
 I'm making this project for personal experience in hardware and software design as it is my first embedded system project. <br>  
 	
-![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Drone/Drone_Image_1.png) <br> Image of Drone CAD <br> <br>
-![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Drone/Drone_Image_2.png) <br> Top view of Drone CAD <br> <br>
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Drone/Drone_Final.jpeg) <br> Image of Drone <br> <br>
 ![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Controller/Controller_Image_1.jpeg) <br> Controller with lid <br> <br>
 ![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Controller/Controller_Image_2.jpeg) <br> Controller without lid <br> <br>
 	
@@ -43,11 +42,13 @@ I'm making this project for personal experience in hardware and software design 
 - M3 bolts  **x4** minimum length 18mm
 - M3 bolts for motors **x16** minimum length 10mm
 - M5 bolts **x4** minimum length 70mm
-	 
 - electrical tape
 - battery straps **x2**
 - automotive plastic tubing 1.5mm inner diameter 2.5mm outer diameter for M1.6 stand-offs
 - stiff foam (for MPU-6050 and joystick stand-off/ shock absorption)
+
+**Tools**
+
 - sandpaper low grit
 - hacksaw
 - soldering iron (and solder and a sponge)
@@ -100,9 +101,9 @@ optionally the lid can also be put on and even without screws the fit is quite t
 
 ### Drone:
 
-**1.** Slice and print the Top and Base of the Drone and Spacers: files can be found ![Drone CAD Files](https://github.com/twodoot/RC-Drone/tree/main/CAD%20Files/Drone)
+Slice and print the Top and Base of the Drone and Spacers: files can be found ![Drone CAD Files](https://github.com/twodoot/RC-Drone/tree/main/CAD%20Files/Drone)
 
-**2.** Connecting the drone arduino and the MPU-6050 IMU: 4 wires will need to be soldered, cut off wire about 20mm long with both ends exposed. Solder one end of the wires onto the MPU-6050 soldering A4 to SDA and A5 to SCL, GND to GND and 3.3V to VCC.
+Connecting the drone arduino and the MPU-6050 IMU: 4 wires will need to be soldered, cut off wire about 20mm long with both ends exposed. Solder one end of the wires onto the MPU-6050 soldering A4 to SDA and A5 to SCL, GND to GND and 3.3V to VCC.
 
 ![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Wiring%20Diagrams/Drone%20Wiring%20Diagram.png)
 
@@ -145,26 +146,31 @@ also connect the USBC 5 volt and GND to the respective 5 volt and GND of a BEC a
 
 To flash the code to the arduinos you will need to install Platform IO on VS code
 Libraries are already managed by Platform IO in the platformio.ini file.
+
+<img width="390" height="143" alt="image" src="https://github.com/user-attachments/assets/f2b7b3b2-9168-4254-9a31-abd1b677980c" />
+
+
 to flash connect the required arduino to the computer you are on via USB.
 Select which file you want to build from the SRC filter by uncommenting it
-(pic to show what i mean)
+
+<img width="353" height="237" alt="image" src="https://github.com/user-attachments/assets/1acd23e8-5335-461d-bd45-51830343d55f" />
+
+
 source code can be found in the src folder but to get all the code as a whole just clone the repo in vscode.
 
-You will need the mac address of your drone arduino to insert into the code manually (in the controller code). This can be done by flashing the getmacadress file to your drone arduino and running it, which will print the mac address of the drone in the serial monitor in a format where it can be simply copy pasted into the controller code.
+You will need the mac address of your drone arduino to insert into the code manually (in the controller code). This can be done by flashing the GetMacAddress.cpp file to your drone arduino and running it, which will print the mac address of the drone in the serial monitor in a format where it can be simply copy pasted into the controller code.
 
-Then you should calibrate the Controller by running the controller calibration function so all values being sent are 0n when joystick is not being pushed. and these offsets should be input into the offsets for the 2 controller code versions.
+Then you should calibrate the Controller by running the JoystickGetOffsets.cpp file so all values being sent are 0 when joystick is not being pushed. and these offsets should be input into the offsets for the 2 controller code versions.
 
-flash the controllercode.cpp to the controller 
+flash the ControllerCode.cpp to the controller 
 
-Then flash the BLDCtest.cpp to the drone arduino to see which motor is which (MOT1 should  be left stick up, MOT2 left stick right,  MOT3 right stick up, MOT4 right stick right) and swap the BEC PWM wires (D6-D9) accordingly until the correct motors get powered by the correct actions.
+Then flash the bldctest.cpp to the drone arduino to see which motor is which (MOT1 should  be left stick up, MOT2 left stick right,  MOT3 right stick up, MOT4 right stick right) and swap the BEC PWM wires (D6-D9) accordingly until the correct motors get powered by the correct actions.
 
 Then add tape to to each motor to observe its direction of spin. and swap any 2 of the 3 phase connectors between motor and ESC to change direction of spin until MOT1 and MOT4 are counter clockwise and MOT 2 and MOT 3 are clockwise. MOT1 is front left, MOT2 is front right, MOT3 is back left, MOT4 is back right, taking the back to be where the USB port of the drone arduino is.
 
-Then Calibrate the ESCs by powering controller on with controllercode.cpp flashed to it with max throttle being held down and then turn on the drone from battery with ESC calibration code flashed to it after the first series of beeps are heard imediatly lower throttle stick to 0 and wait untill the ESCs stop beeping
+Then Calibrate the ESCs by powering controller on with ControllerCode.cpp flashed to it with max throttle being held down and then turn on the drone from battery with ESC calibration code flashed to it after the first series of beeps are heard immediately lower throttle stick to 0 and wait until the ESCs stop beeping.
 
-Then flash Drone code to the Drone arduino and flash controllercodealtthrottle to the controller
-the left stick up and down lowers and increases throttle, if let go the current throttle signal is kept, actively needs to be held down to  decrease throttle, left and right  on left stick is yaw left and right, right stick left and right is x axis roll left and right , right stick up and down is y roll of drone. in the main flight mode which is the only one that actually functions well from my testing roll rate is controller by stick and drone and in the alternate one which is accessed by pressing down the right stick once will the be the angle based flight mode but i haven’t been able to get it functioning too well so be warned if using it.
+Then flash Drone code to the Drone arduino and flash ControllerCodeAltThrottle.cpp to the controller and with ESCcalibrate.cpp flashed to the drone arduino
+the left stick up and down lowers and increases throttle, if let go the current throttle signal is kept, actively needs to be held down to  decrease throttle, left and right on left stick is yaw left and right, right stick left and right is x axis roll left and right, right stick up and down is y roll of drone. in the main flight mode which is the only one that actually functions well from my testing roll rate is controller by stick and drone and in the alternate one which is accessed by pressing down the right stick once will the be the angle based flight mode but i haven’t been able to get it functioning too well so be warned if using it.
 
 also mount the propellers onto the motors after removing the tape from them and screw the nut as tight as possible so that it doesn’t come out.
-
-
