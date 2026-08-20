@@ -31,7 +31,7 @@ Here is a link to a video showing a demo of the drone that I built: [Drone Demo]
 - Electronic Speed Controller (ESC) at least 40amp rated **x4**
 - KY-023 joystick modules **x2**
 - jumper wires **many**
-- male terminal banana connectors 2.5mm (for soldering not crimping) **x12**
+- male terminal banana connectors 3.5mm (for soldering not crimping) **x12**
 - 2400kv brushless DC motors **x4**
 - drone propellers (recommended  5.1x3.6x3) **x4**
 - USBC to USBA cable (power and data) **x2**
