@@ -6,8 +6,8 @@ I'm making this project for personal experience in hardware and software design 
 	
 ![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Drone/Drone_Image_1.png) <br> Image of Drone CAD <br> <br>
 ![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Drone/Drone_Image_2.png) <br> Top view of Drone CAD <br> <br>
-![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Controller/Controller_Image_1.png) <br> Controller with lid <br> <br>
-![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Controller/Controller_Image_2.png) <br> Controller without lid <br> <br>
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Controller/Controller_Image_1.jpeg) <br> Controller with lid <br> <br>
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Controller/Controller_Image_2.jpeg) <br> Controller without lid <br> <br>
 	
 ## Parts List
 	
@@ -66,11 +66,13 @@ solder wires with female headers onto the relevant pins of the arduino as seen i
 ![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Wiring%20Diagrams/Wiring%20Diagram%20Controller.png)
 
 extract supports from the controller body:
-(pic before)
-(pic after)
 
-sand down the Drawer until it fits stiffly into the body slot for the power bank underneath but doesn't  slide out easily.
-(pic of drawer inside body)
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Controller/Controller_Supports_Before.png)
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Controller/Controller_Supports_After.png)
+
+sand down the Drawer until it fits stiffly into the body slot for the power bank underneath but doesn't slide out easily.
+
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Controller/Controller_Drawer_Sanded.png)
 
 first screw in and screw out M1.6 bolts out of the arduino stand-off locations on the controller to widen the tolerances.
 
@@ -79,7 +81,7 @@ cut off 8 thin bits of the plastic tubing between 1-2mm in length but keep it co
 fit one stand-off through each M1.6 bolt and then put them on the arduino through the top (USB port is on top) then on the bottom put the other 4 stand-offs sandwiching the arduino between them.
 place the arduino on top of the holes M1.6 holes and screw in the bolts first screwing in all the bolts a small amount until they are all in the threads then taking turns slowly screwing them in until all are screwed in tight and the arduino doesn't wobble.
 
-(pic of arduino in controller)
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Controller/Controller_Arduino_Mounted.jpeg)
 
 screw in and out M2.5 bolts a small amount into each mounting hole to widen tolerances and make it easier to screw in joystick modules
 
@@ -89,10 +91,11 @@ connect the wires up to the joystick modules: GND to GND to each module, 3.3V to
 
 connect a USBC to USBA cable that just reaches the power bank underneath to the slot on the arduino for it.
 
-(pic of assembled controller)
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Controller/Controller_Assembled.png)
 
 optionally the lid can also be put on and even without screws the fit is quite tight so they aren't necessary at all but if you do want to screw it in M3 screws are needed 
-(pic of controller with lid)
+
+![image](https://raw.githubusercontent.com/twodoot/RC-Drone/main/Images/Controller/Controller_Image_1.jpeg)
 
 
 ### Drone:
