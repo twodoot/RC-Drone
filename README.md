@@ -12,49 +12,73 @@ I'm making this project for personal experience in hardware and software design 
 ## Parts List
 	
 **3D Printed:**
+
 - Drone Base
 - Drone Top 
 - Drone legs **x4** 
 - Controller Body
 - Controller Lid
-- M1.6 Spacers **16**
-- M3 Spacers **20**
+- Controller Drawer
 	
 **Electronic Components**
 	
 - Adruino nano ESP32 without pins **x2**
 - MPU-6050
 - 4S 2200mah LiPo battery
-- XT-60 1 felmale -> 2 male splitter **x3**
-- 9 volt battery
-- 9 volt battery connector
+- XT-60 1 female -> 2 male splitter **x3**
+- 5 Volt USB Power Bank (max dimensions: 10.6L x 6.8W x 1.6Th cm)
 - Electronic Speed Controller (ESC) at least 40amp rated **x4**
 - KY-023 joystick modules **x2**
 - jumper wires **many**
+- male terminal banana connectors 2.5mm (for soldering not crimping) **x12**
+- 2400kv brushless DC motors **x4**
+- drone propellers (recommended  5.1x3.6x3) **x4** 
 	
 **Structural**
 	
 - M1.6 bolts **x8** minimum length 15mm
-- M3 bolts  **x13** minimum length 18mm
-- M3 bolts for motors (usually come included with motors) **x16**
-- M5 bolts **x4** minimum length 73mm
-	
-- M1.6 Nuts **x4**
-- M5 nuts **x12** 
-- zip ties **x8**
+- M2.5 bolts **x8**
+- M3 bolts  **x4** minimum length 18mm
+- M3 bolts for motors **x16** minimum length 10mm
+- M5 bolts **x4** minimum length 70mm
+	 
+- electrical tape
 - battery straps **x2**
+- automotive plastic tubing 1.5mm inner diameter 2.5mm outer diameter for M1.6 stand-offs
+- stiff foam (for MPU-6050 and joystick stand-off/ shock absorption)
+- sandpaper low grit
+- hacksaw
+- soldering iron (and solder and a sponge)
+- multimeter (for debugging in case you run into issues assembling)
+- scissors
+- pliers
 
 ## Assembly
 
 ### Controller:
 
-**1.** Slice and print the Lid and Base of the controller and Spacers: files can be found ![Controller CAD Files](https://github.com/twodoot/RC-Drone/tree/main/CAD%20Files/Controller)
+Slice and print the Lid and Base of the controller files can be found: ![Controller CAD Files](https://github.com/twodoot/RC-Drone/tree/main/CAD%20Files/Controller)
 
-**2.** Wire up the Ardiuno nano ESP-32 and the joystick modules with relativly long cables so that they can be fit into the controller later easily by reffering to this wiring diagram. This will require soldering and where a 9 volt battery is mentioned in the wiring diagram solder the 9 volt battery connector between the VIN and GND of the arduino (the ground cable will require 2 cables be solderd together on a 3 way junciton as well as the 3.3V power and GND for the joysticks)
+solder wires with female headers onto the relevant pins of the arduino as seen in the wiring diagram below if you are unsure of my following description, ensuring they are large enough to reach the joystick pins when inside the controller but not too much longer so that the wires can fit inside easily. to the A0-A3 and to D3 solder wires with female headers, and then make 2 wires that have 3 way connectoins stripping a section of casing off the middle off one wire with a female header and soldering another wire with a female header to it. Cover all exposed wires with either heat shrinks (if you have any) or electrical tape (what I did). 
 
 ![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Wiring%20Diagrams/Wiring%20Diagram%20Controller.png)
 
-**3.** Place M1.6 spacers (or standoffs) on the M1.6 screw holes <br> 
+sand down the Drawer until it fits stiffly into the body slot for the power bank underneath but doesn't  slide out easily.
+
+first screw in and screw out M1.6 bolts out of the arduino stand-off locations on the controller to widen the tolerances.
+
+cut off 8 thin bits of the plastic tubing between 1-2mm in length but keep it consistent between the 8.
+
+fit one stand-off through each M1.6 bolt and then put them on the arduino through the top (USB port is on top) then on the bottom put the other 4 stand-offs sandwiching the arduino between them.
+place the arduino on top of the holes M1.6 holes and screw in the bolts first screwing in all the bolts a small amount until they are all in the threads then taking turns slowly screwing them in until all are screwed in tight and the arduino doesn't wobble.
+
+screw in and out M2.5 bolts a small amount into each mounting hole to widen tolerances and make it easier to screw in joystick modules
+
+cut a rectangle of foam around the base of one of the joystick modules then cut it down to only about 3mm thick and repeat for the other one. thread M2.5 bolts through the mounting holes on each joystick modules and through the foam until it just is about to poke through the bottom then put the joysticks with the attached foam pads on top of the joystick mounting holes and screw them in. ensure the joystick modules are screwed in with the pins facing the arduino.
+
+connect the wires up to the joystick modules: GND to GND to each module, 3.3V to +5V to each module, A3 to VRX of left joystick, A2 to VRY of left module, A1 to VRX of right module, A0 to VRY of right joysick, D3 to the SW of right joystick.
+
+connect a USBC to USBA cable that just reaches the power bank underneath to the slot on the arduino for it.
 
 ![image](https://raw.githubusercontent.com/twodoot/RC-Drone/refs/heads/main/Images/Controller/Controller_Assembly_Nano_Standoffs.png)
 
