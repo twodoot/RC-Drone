@@ -57,6 +57,7 @@ Here is a link to a video showing a demo of the drone that I built: [Drone Demo]
 - multimeter (for debugging in case you run into issues assembling)
 - scissors
 - pliers
+- screwdriver
 
 ## Assembly
 
