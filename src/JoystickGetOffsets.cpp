@@ -10,20 +10,20 @@ uint16_t right_x_sum = 0;
 
 void setup() {
   Serial.begin(115200);
-  pinMode(A0,INPUT);
-  pinMode(A1,INPUT);
-  pinMode(A2,INPUT);
-  pinMode(A3,INPUT);
-  pinMode(D3,INPUT_PULLUP);
+  pinMode(4,INPUT);
+  pinMode(3,INPUT);
+  pinMode(2,INPUT);
+  pinMode(1,INPUT);
+  pinMode(6,INPUT_PULLUP);
 }
 
 void loop() {
     
   for (int i=0; i<10; i++) {
-    left_y_sum += analogRead(A3);
-    left_x_sum += analogRead(A2);
-    right_y_sum += analogRead(A1);
-    right_x_sum += analogRead(A2);
+    left_y_sum += analogRead(4);
+    left_x_sum += analogRead(3);
+    right_y_sum += analogRead(2);
+    right_x_sum += analogRead(1);
     delay(100); }
   
   left_y_sum /=10;
